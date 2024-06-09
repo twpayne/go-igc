@@ -343,11 +343,37 @@ func TestParseLines(t *testing.T) {
 					Date: time.Date(2008, time.May, 2, 0, 0, 0, 0, time.UTC),
 				},
 				&igc.BRecord{
-					Time:     time.Date(2008, time.May, 2, 10, 0o5, 36, 0, time.UTC),
+					Time:     time.Date(2008, time.May, 2, 10, 5, 36, 0, time.UTC),
 					Lat:      46 + 7690/1e5,
 					Lon:      6 + 10358/1e5,
 					Validity: igc.Validity3D,
 					AltWGS84: 1265,
+				},
+			},
+		},
+		{
+			name: "b_record_negative_altitudes",
+			lines: []string{
+				"HFDTEDATE:211022",
+				"B1652002737662N08031679WA-0037-0017",
+			},
+			expectedRecords: []igc.Record{
+				&igc.HFDTERecord{
+					HRecord: igc.HRecord{
+						Source:   igc.SourceFlightRecorder,
+						TLC:      "DTE",
+						LongName: "DATE",
+						Value:    "211022",
+					},
+					Date: time.Date(2022, time.October, 21, 0, 0, 0, 0, time.UTC),
+				},
+				&igc.BRecord{
+					Time:          time.Date(2022, time.October, 21, 16, 52, 0, 0, time.UTC),
+					Lat:           27 + 37662/1e5,
+					Lon:           -(80 + 31679/1e5),
+					Validity:      igc.Validity3D,
+					AltBarometric: -37,
+					AltWGS84:      -17,
 				},
 			},
 		},

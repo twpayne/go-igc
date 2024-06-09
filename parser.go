@@ -52,7 +52,7 @@ func (e unknownRecordTypeError) Error() string {
 
 var (
 	aRecordRx          = regexp.MustCompile(`\AA([A-Z]{3})(.*)\z`)
-	bRecordRx          = regexp.MustCompile(`\AB(\d{2})(\d{2})(\d{2})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])(\d{5})(\d{5})(.*)\z`)
+	bRecordRx          = regexp.MustCompile(`\AB(\d{2})(\d{2})(\d{2})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])([0-9\-]\d{4})([0-9\-]\d{4})(.*)\z`)
 	cRecordRx          = regexp.MustCompile(`\AC(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*)\z`)
 	firstCRecordRx     = regexp.MustCompile(`\AC(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})(\d{2})(.*)\z`)
 	dRecordRx          = regexp.MustCompile(`\AD([12])(\d{4})\z`)
