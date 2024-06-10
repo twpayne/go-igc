@@ -108,6 +108,7 @@ func (p *parser) parse(r io.Reader) (*IGC, error) {
 	var kRecords []*KRecord
 	var errs []error
 	scanner := bufio.NewScanner(r)
+	scanner.Split(scanLines)
 	for lineNumber := 1; scanner.Scan(); lineNumber++ {
 		line := []byte(scanner.Text())
 		if len(line) == 0 {
@@ -605,6 +606,30 @@ func atoi(data []byte) (int, error) {
 		result = 10*result + int(b) - '0'
 	}
 	return result * sign, nil
+}
+
+// trimCRs drops terminal \rs from data.
+func trimCRs(data []byte) []byte {
+	for i := len(data) - 1; i >= 0; i-- {
+		if data[i] != '\r' {
+			return data[:i+1]
+		}
+	}
+	return nil
+}
+
+// scanLines is a bufio.SplitFunc that splits lines according the regexp \r*\n.
+func scanLines(data []byte, atEOF bool) (int, []byte, error) {
+	if atEOF && len(data) == 0 {
+		return 0, nil, nil
+	}
+	if i := bytes.IndexByte(data, '\n'); i >= 0 {
+		return i + 1, trimCRs(data[:i]), nil
+	}
+	if atEOF {
+		return len(data), trimCRs(data), nil
+	}
+	return 0, nil, nil
 }
 
 // intPow returns x raised to the power of y.

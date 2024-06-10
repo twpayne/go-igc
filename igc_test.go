@@ -907,6 +907,9 @@ func TestParseLines(t *testing.T) {
 
 func TestParseTestData(t *testing.T) {
 	expectedErrorsByName := map[string][]string{
+		"2017_08_31_00_14_21_88GGB291.IGC": {
+			`8722: "\x1A": unknown record type`,
+		},
 		"2024-02-09-XFH-000-01.IGC": {
 			"12080: invalid E record",
 			"25913: invalid E record",
