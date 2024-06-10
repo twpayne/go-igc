@@ -63,7 +63,7 @@ var (
 	dRecordRx          = regexp.MustCompile(`\AD([12])(\d{4})\z`)
 	eRecordRx          = regexp.MustCompile(`\AE(\d{2})(\d{2})(\d{2})([A-Z]{3})(.*)\z`)
 	fRecordRx          = regexp.MustCompile(`\AF(\d{2})(\d{2})(\d{2})((?:\d{2})*)\z`)
-	hRecordRx          = regexp.MustCompile(`\AH([FOP])([0-9A-Z]{3})([ 0-9A-Za-z]*)(?::(.*))?\z`)
+	hRecordRx          = regexp.MustCompile(`\AH([FOP])([0-9A-Z]{3})(.*?)(?::(.*))?\z`)
 	hfdteRecordRx      = regexp.MustCompile(`\AHFDTE(\d{2})(\d{2})(\d{2})\z`)
 	hfdteRecordValueRx = regexp.MustCompile(`(\d{2})(\d{2})(\d{2})(?:,(\d{2}))?\z`)
 	hffxaRecordRx      = regexp.MustCompile(`\AHFFXA(\d+)\z`)
