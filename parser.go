@@ -4,11 +4,13 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"math"
 	"regexp"
 	"strconv"
 	"time"
+	"unicode"
 )
 
 var errNoDate = errors.New("no date")
@@ -47,7 +49,10 @@ func (e *missingAdditionError) Error() string {
 type unknownRecordTypeError byte
 
 func (e unknownRecordTypeError) Error() string {
-	return string(e) + ": unknown record type"
+	if unicode.IsPrint(rune(e)) {
+		return string(e) + ": unknown record type"
+	}
+	return fmt.Sprintf(`"\x%02X": unknown record type`, byte(e))
 }
 
 var (

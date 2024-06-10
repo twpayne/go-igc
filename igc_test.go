@@ -311,6 +311,11 @@ func TestParseLine(t *testing.T) {
 			expectedErr: "1: X: unknown record type",
 		},
 		{
+			name:        "unknown_record_null",
+			line:        "\x00",
+			expectedErr: `1: "\x00": unknown record type`,
+		},
+		{
 			name: "empty line",
 		},
 	} {
