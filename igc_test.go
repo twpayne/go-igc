@@ -293,9 +293,17 @@ func TestParseLine(t *testing.T) {
 			},
 		},
 		{
-			name:        "l_record_invalid",
-			line:        "L",
-			expectedErr: "1: invalid L record",
+			name: "l_record_short",
+			line: "LCU::HPGTYGLIDERTYPE:SZD 55",
+			expectedRecord: &igc.LRecord{
+				Input: "CU",
+				Text:  "::HPGTYGLIDERTYPE:SZD 55",
+			},
+		},
+		{
+			name:           "l_record_empty",
+			line:           "L",
+			expectedRecord: &igc.LRecord{},
 		},
 		{
 			name:        "unknown_record",

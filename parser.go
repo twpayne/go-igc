@@ -65,7 +65,7 @@ var (
 	gRecordRx          = regexp.MustCompile(`\AG(.*)\z`)
 	ijRecordRx         = regexp.MustCompile(`\A[IJ](\d{2})((?:\d{4}[A-Z]{3})*)\z`)
 	kRecordRx          = regexp.MustCompile(`\AK(\d{2})(\d{2})(\d{2})(.*)\z`)
-	lRecordRx          = regexp.MustCompile(`\AL([A-Z]{3})(.*)\z`)
+	lRecordRx          = regexp.MustCompile(`\AL([A-Z]{0,3})(.*)\z`)
 )
 
 type parser struct {
