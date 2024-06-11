@@ -104,7 +104,7 @@ func newParser() *parser {
 func (p *parser) parse(r io.Reader) (*IGC, error) {
 	var records []Record
 	var bRecords []*BRecord
-	hRecordsByTLC := make(map[string]Record)
+	hRecordsByTLC := make(map[string]*HRecord)
 	var kRecords []*KRecord
 	var errs []error
 	scanner := bufio.NewScanner(r)
@@ -164,7 +164,7 @@ func (p *parser) parse(r io.Reader) (*IGC, error) {
 			}
 		case *HFDTERecord:
 			if record != nil {
-				hRecordsByTLC[record.TLC] = record
+				hRecordsByTLC[record.TLC] = &record.HRecord
 				p.date = record.Date
 			}
 		case *IRecord:

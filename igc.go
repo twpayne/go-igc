@@ -162,7 +162,7 @@ type LRecord struct {
 type IGC struct {
 	Records       []Record
 	BRecords      []*BRecord
-	HRecordsByTLC map[string]Record
+	HRecordsByTLC map[string]*HRecord
 	KRecords      []*KRecord
 	Errs          []error
 }
