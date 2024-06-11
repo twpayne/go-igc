@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math"
 	"regexp"
 	"strconv"
 	"time"
@@ -94,9 +93,9 @@ func newParser() *parser {
 	return &parser{
 		bRecordsAdditionsByTLC: make(map[string]*BKRecordAddition),
 		latMinMul:              1,
-		latMinDiv:              1e5,
+		latMinDiv:              6e4,
 		lonMinMul:              1,
-		lonMinDiv:              1e5,
+		lonMinDiv:              6e4,
 		fracSecondMul:          1e9,
 	}
 }
@@ -177,13 +176,13 @@ func (p *parser) parse(r io.Reader) (*IGC, error) {
 					p.ladBRecordAddition = ladBRecordAddition
 					n := ladBRecordAddition.FinishColumn - ladBRecordAddition.StartColumn + 1
 					p.latMinMul = intPow(10, n)
-					p.latMinDiv = math.Pow(10, float64(5+n))
+					p.latMinDiv = float64(6e4 * intPow(10, n))
 				}
 				if lodBRecordAddition, ok := p.bRecordsAdditionsByTLC["LOD"]; ok {
 					p.lodBRecordAddition = lodBRecordAddition
 					n := lodBRecordAddition.FinishColumn - lodBRecordAddition.StartColumn + 1
 					p.lonMinMul = intPow(10, n)
-					p.lonMinDiv = math.Pow(10, float64(5+n))
+					p.lonMinDiv = float64(6e4 * intPow(10, n))
 				}
 				if tdsBRecordAddition, ok := p.bRecordsAdditionsByTLC["TDS"]; ok {
 					p.tdsBRecordAddition = tdsBRecordAddition
@@ -310,13 +309,13 @@ func (p *parser) parseCRecord(line []byte) (Record, error) {
 	var cRecord CRecord
 	latDeg, _ := atoi(m[1])
 	latMin, _ := atoi(m[2])
-	cRecord.Lat = float64(latDeg) + float64(latMin)/1e5
+	cRecord.Lat = float64(latDeg) + float64(latMin)/6e4
 	if m[3][0] == 'S' {
 		cRecord.Lat = -cRecord.Lat
 	}
 	lonDeg, _ := atoi(m[4])
 	lonMin, _ := atoi(m[5])
-	cRecord.Lon = float64(lonDeg) + float64(lonMin)/1e5
+	cRecord.Lon = float64(lonDeg) + float64(lonMin)/6e4
 	if m[6][0] == 'W' {
 		cRecord.Lon = -cRecord.Lon
 	}

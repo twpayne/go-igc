@@ -73,8 +73,8 @@ func TestParseLine(t *testing.T) {
 			name: "c_record",
 			line: "C4415173N00604205ET-296-Trainon",
 			expectedRecord: &igc.CRecord{
-				Lat:  44 + 15173/1e5,
-				Lon:  6 + 4205/1e5,
+				Lat:  44 + 15173/6e4,
+				Lon:  6 + 4205/6e4,
 				Text: "T-296-Trainon",
 			},
 		},
@@ -82,8 +82,8 @@ func TestParseLine(t *testing.T) {
 			name: "c_record_sw",
 			line: "C4415173S00604205WT-296-Trainon",
 			expectedRecord: &igc.CRecord{
-				Lat:  -(44 + 15173/1e5),
-				Lon:  -(6 + 4205/1e5),
+				Lat:  -(44 + 15173/6e4),
+				Lon:  -(6 + 4205/6e4),
 				Text: "T-296-Trainon",
 			},
 		},
@@ -357,8 +357,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:     time.Date(2008, time.May, 2, 10, 5, 36, 0, time.UTC),
-					Lat:      46 + 7690/1e5,
-					Lon:      6 + 10358/1e5,
+					Lat:      46 + 7690/6e4,
+					Lon:      6 + 10358/6e4,
 					Validity: igc.Validity3D,
 					AltWGS84: 1265,
 				},
@@ -382,8 +382,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2022, time.October, 21, 16, 52, 0, 0, time.UTC),
-					Lat:           27 + 37662/1e5,
-					Lon:           -(80 + 31679/1e5),
+					Lat:           27 + 37662/6e4,
+					Lon:           -(80 + 31679/6e4),
 					Validity:      igc.Validity3D,
 					AltBarometric: -37,
 					AltWGS84:      -17,
@@ -416,8 +416,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 4, 15, 1, 44, 0, time.UTC),
-					Lat:           47 + 8879/1e5,
-					Lon:           8 + 32146/1e5,
+					Lat:           47 + 8879/6e4,
+					Lon:           8 + 32146/6e4,
 					Validity:      igc.Validity3D,
 					AltBarometric: 929,
 					AltWGS84:      941,
@@ -454,8 +454,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 4, 15, 1, 44, 0, time.UTC),
-					Lat:           47 + 8879/1e5,
-					Lon:           8 + 32146/1e5,
+					Lat:           47 + 8879/6e4,
+					Lon:           8 + 32146/6e4,
 					Validity:      igc.Validity3D,
 					AltBarometric: 929,
 					AltWGS84:      941,
@@ -493,8 +493,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 4, 15, 1, 44, 0, time.UTC),
-					Lat:           47 + 8879/1e5,
-					Lon:           8 + 32146/1e5,
+					Lat:           47 + 8879/6e4,
+					Lon:           8 + 32146/6e4,
 					Validity:      igc.Validity3D,
 					AltBarometric: 929,
 					AltWGS84:      941,
@@ -532,8 +532,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 4, 15, 1, 44, 4e8, time.UTC),
-					Lat:           47 + 88795/1e6,
-					Lon:           8 + 321466/1e6,
+					Lat:           47 + 88795/6e5,
+					Lon:           8 + 321466/6e5,
 					Validity:      igc.Validity3D,
 					AltBarometric: 929,
 					AltWGS84:      941,
@@ -634,7 +634,7 @@ func TestParseLines(t *testing.T) {
 			lines: []string{
 				"AXTR20C38FF2C110",
 				"HFDTE151115",
-				"B1316284654230N00839078EA0147801630",
+				"B1316284654230N00839079EA0147801630",
 			},
 			expectedRecords: []igc.Record{
 				&igc.ARecord{
@@ -652,8 +652,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2015, time.November, 15, 13, 16, 28, 0, time.UTC),
-					Lat:           46 + 54230/1e5,
-					Lon:           8 + 39078/1e5,
+					Lat:           46 + 54230/6e4,
+					Lon:           8 + 39079/6e4,
 					Validity:      igc.Validity3D,
 					AltBarometric: 1478,
 					AltWGS84:      1630,
@@ -691,8 +691,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2013, time.June, 2, 10, 53, 52, 8e8, time.UTC),
-					Lat:           51 + 51892/1e5,
-					Lon:           -(2 + 3986/1e5),
+					Lat:           51 + 51892/6e4,
+					Lon:           -(2 + 3986/6e4),
 					Validity:      igc.Validity3D,
 					AltBarometric: 179,
 					AltWGS84:      275,
@@ -735,8 +735,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2010, time.August, 10, 11, 46, 17, 0, time.UTC),
-					Lat:           40 + 3198512/1e7,
-					Lon:           -(7 + 2677534/1e7),
+					Lat:           40 + 3198512/6e6,
+					Lon:           -(7 + 2677534/6e6),
 					Validity:      igc.Validity3D,
 					AltBarometric: 1004,
 					AltWGS84:      1149,
@@ -753,7 +753,7 @@ func TestParseLines(t *testing.T) {
 			lines: []string{
 				"AXGD Flymaster LiveSD  SN03142  SW1.07b",
 				"HFDTEDATE:220418,01",
-				"B1316284654230N00839078EA0147801630",
+				"B1316284654230N00839079EA0147801630",
 			},
 			expectedRecords: []igc.Record{
 				&igc.ARecord{
@@ -772,8 +772,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2018, time.April, 22, 13, 16, 28, 0, time.UTC),
-					Lat:           46 + 54230/1e5,
-					Lon:           8 + 39078/1e5,
+					Lat:           46 + 54230/6e4,
+					Lon:           8 + 39079/6e4,
 					Validity:      igc.Validity3D,
 					AltBarometric: 1478,
 					AltWGS84:      1630,
@@ -807,8 +807,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 5, 23, 59, 59, 0, time.UTC),
-					Lat:           37 + 160843/1e6,
-					Lon:           -(118 + 150096/1e6),
+					Lat:           37 + 160843/6e5,
+					Lon:           -(118 + 150096/6e5),
 					Validity:      igc.Validity3D,
 					AltBarometric: 4406,
 					AltWGS84:      4672,
@@ -819,8 +819,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 6, 0, 0, 1, 0, time.UTC),
-					Lat:           37 + 160743/1e6,
-					Lon:           -(118 + 150070/1e6),
+					Lat:           37 + 160743/6e5,
+					Lon:           -(118 + 150070/6e5),
 					Validity:      igc.Validity3D,
 					AltBarometric: 4408,
 					AltWGS84:      4675,
@@ -859,8 +859,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 5, 23, 59, 59, 0, time.UTC),
-					Lat:           37 + 160843/1e6,
-					Lon:           -(118 + 150096/1e6),
+					Lat:           37 + 160843/6e5,
+					Lon:           -(118 + 150096/6e5),
 					Validity:      igc.Validity3D,
 					AltBarometric: 4406,
 					AltWGS84:      4672,
@@ -881,8 +881,8 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.BRecord{
 					Time:          time.Date(2024, time.June, 6, 0, 0, 1, 0, time.UTC),
-					Lat:           37 + 160743/1e6,
-					Lon:           -(118 + 150070/1e6),
+					Lat:           37 + 160743/6e5,
+					Lon:           -(118 + 150070/6e5),
 					Validity:      igc.Validity3D,
 					AltBarometric: 4408,
 					AltWGS84:      4675,
