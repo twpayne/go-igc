@@ -171,3 +171,8 @@ type IGC struct {
 func Parse(r io.Reader) (*IGC, error) {
 	return newParser().parse(r)
 }
+
+// Parse parses an IGC from lines.
+func ParseLines(lines []string) (*IGC, error) {
+	return newParser().parseLines(lines)
+}

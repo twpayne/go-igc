@@ -3,7 +3,6 @@ package igc_test
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 	"time"
 
@@ -320,7 +319,7 @@ func TestParseLine(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, err := igc.Parse(strings.NewReader(tc.line + "\r\n"))
+			actual, err := igc.ParseLines([]string{tc.line})
 			assert.NoError(t, err)
 			if tc.expectedErr != "" {
 				assertEqualErrors(t, []string{tc.expectedErr}, actual.Errs)
@@ -895,7 +894,7 @@ func TestParseLines(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, err := igc.Parse(strings.NewReader(strings.Join(tc.lines, "\r\n") + "\r\n"))
+			actual, err := igc.ParseLines(tc.lines)
 			assert.NoError(t, err)
 			assertEqualErrors(t, tc.expectedErrs, actual.Errs)
 			if tc.expectedRecords != nil {

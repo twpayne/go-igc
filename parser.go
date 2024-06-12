@@ -101,18 +101,29 @@ func newParser() *parser {
 }
 
 func (p *parser) parse(r io.Reader) (*IGC, error) {
+	var lines []string
+	scanner := bufio.NewScanner(r)
+	scanner.Split(scanLines)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return p.parseLines(lines)
+}
+
+func (p *parser) parseLines(lines []string) (*IGC, error) {
 	var records []Record
 	var bRecords []*BRecord
 	hRecordsByTLC := make(map[string]*HRecord)
 	var kRecords []*KRecord
 	var errs []error
-	scanner := bufio.NewScanner(r)
-	scanner.Split(scanLines)
-	for lineNumber := 1; scanner.Scan(); lineNumber++ {
-		line := []byte(scanner.Text())
-		if len(line) == 0 {
+	for i, lineStr := range lines {
+		if len(lineStr) == 0 {
 			continue
 		}
+		line := []byte(lineStr)
 
 		var record Record
 		var err error
@@ -147,7 +158,7 @@ func (p *parser) parse(r io.Reader) (*IGC, error) {
 		records = append(records, record)
 		if err != nil {
 			errs = append(errs, &Error{
-				Line: lineNumber,
+				Line: i + 1,
 				Err:  err,
 			})
 		}
@@ -199,10 +210,6 @@ func (p *parser) parse(r io.Reader) (*IGC, error) {
 				kRecords = append(kRecords, record)
 			}
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 
 	return &IGC{
