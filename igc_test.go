@@ -69,6 +69,15 @@ func TestParseLine(t *testing.T) {
 			},
 		},
 		{
+			name: "first_c_record_xctrack",
+			line: "C0110231200370000000000-1 Competition task",
+			expectedRecord: &igc.FirstCRecord{
+				DeclarationTime:    time.Date(2023, time.October, 1, 12, 0, 37, 0, time.UTC),
+				NumberOfTurnpoints: -1,
+				Text:               " Competition task",
+			},
+		},
+		{
 			name: "c_record",
 			line: "C4415173N00604205ET-296-Trainon",
 			expectedRecord: &igc.CRecord{
