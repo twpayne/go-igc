@@ -914,7 +914,26 @@ func TestParseLines(t *testing.T) {
 }
 
 func TestParseTestData(t *testing.T) {
+	t.Parallel()
 	expectedErrorsByName := map[string][]string{
+		"0040.igc": {
+			"931: invalid E record",
+		},
+		"0072.igc": {
+			"323: invalid E record",
+		},
+		"0114.igc": {
+			"70: invalid E record",
+			"618: invalid E record",
+			"1130: invalid E record",
+			"1131: invalid E record",
+		},
+		"0211.igc": {
+			"116: invalid E record",
+		},
+		"0253.igc": {
+			"2450: invalid E record",
+		},
 		"2017_08_31_00_14_21_88GGB291.IGC": {
 			`8722: "\x1A": unknown record type`,
 		},
@@ -928,6 +947,7 @@ func TestParseTestData(t *testing.T) {
 	for _, dirEntry := range dirEntries {
 		name := dirEntry.Name()
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			file, err := os.Open(filepath.Join("testdata", name))
 			assert.NoError(t, err)
 			defer file.Close()
