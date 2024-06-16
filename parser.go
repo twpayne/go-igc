@@ -421,7 +421,6 @@ func (p *parser) parseHRecord(line []byte) (Record, error) {
 		var hfdteRecord HFDTERecord
 		hfdteRecord.HRecord.Source = 'F'
 		hfdteRecord.HRecord.TLC = "DTE"
-		hfdteRecord.HRecord.LongName = "DATE"
 		hfdteRecord.HRecord.Value = string(bytes.Join(m[1:], nil))
 		day, _ := atoi(m[1])
 		month, _ := atoi(m[2])

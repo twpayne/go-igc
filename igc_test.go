@@ -172,10 +172,9 @@ func TestParseLine(t *testing.T) {
 			line: "HFDTE220495",
 			expectedRecord: &igc.HFDTERecord{
 				HRecord: igc.HRecord{
-					Source:   igc.SourceFlightRecorder,
-					TLC:      "DTE",
-					LongName: "DATE",
-					Value:    "220495",
+					Source: igc.SourceFlightRecorder,
+					TLC:    "DTE",
+					Value:  "220495",
 				},
 				Date: time.Date(1995, time.April, 22, 0, 0, 0, 0, time.UTC),
 			},
@@ -366,10 +365,9 @@ func TestParseLines(t *testing.T) {
 			expectedRecords: []igc.Record{
 				&igc.HFDTERecord{
 					HRecord: igc.HRecord{
-						Source:   igc.SourceFlightRecorder,
-						TLC:      "DTE",
-						LongName: "DATE",
-						Value:    "020508",
+						Source: igc.SourceFlightRecorder,
+						TLC:    "DTE",
+						Value:  "020508",
 					},
 					Date: time.Date(2008, time.May, 2, 0, 0, 0, 0, time.UTC),
 				},
@@ -573,10 +571,9 @@ func TestParseLines(t *testing.T) {
 			expectedRecords: []igc.Record{
 				&igc.HFDTERecord{
 					HRecord: igc.HRecord{
-						Source:   igc.SourceFlightRecorder,
-						TLC:      "DTE",
-						LongName: "DATE",
-						Value:    "110524",
+						Source: igc.SourceFlightRecorder,
+						TLC:    "DTE",
+						Value:  "110524",
 					},
 					Date: time.Date(2024, time.May, 11, 0, 0, 0, 0, time.UTC),
 				},
@@ -623,10 +620,9 @@ func TestParseLines(t *testing.T) {
 			expectedRecords: []igc.Record{
 				&igc.HFDTERecord{
 					HRecord: igc.HRecord{
-						Source:   igc.SourceFlightRecorder,
-						TLC:      "DTE",
-						LongName: "DATE",
-						Value:    "090224",
+						Source: igc.SourceFlightRecorder,
+						TLC:    "DTE",
+						Value:  "090224",
 					},
 					Date: time.Date(2024, time.February, 9, 0, 0, 0, 0, time.UTC),
 				},
@@ -683,10 +679,9 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.HFDTERecord{
 					HRecord: igc.HRecord{
-						Source:   igc.SourceFlightRecorder,
-						TLC:      "DTE",
-						LongName: "DATE",
-						Value:    "151115",
+						Source: igc.SourceFlightRecorder,
+						TLC:    "DTE",
+						Value:  "151115",
 					},
 					Date: time.Date(2015, time.November, 15, 0, 0, 0, 0, time.UTC),
 				},
@@ -715,10 +710,9 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.HFDTERecord{
 					HRecord: igc.HRecord{
-						Source:   igc.SourceFlightRecorder,
-						TLC:      "DTE",
-						LongName: "DATE",
-						Value:    "020613",
+						Source: igc.SourceFlightRecorder,
+						TLC:    "DTE",
+						Value:  "020613",
 					},
 					Date: time.Date(2013, time.June, 2, 0, 0, 0, 0, time.UTC),
 				},
@@ -759,10 +753,9 @@ func TestParseLines(t *testing.T) {
 				},
 				&igc.HFDTERecord{
 					HRecord: igc.HRecord{
-						Source:   igc.SourceFlightRecorder,
-						TLC:      "DTE",
-						LongName: "DATE",
-						Value:    "100810",
+						Source: igc.SourceFlightRecorder,
+						TLC:    "DTE",
+						Value:  "100810",
 					},
 					Date: time.Date(2010, time.August, 10, 0, 0, 0, 0, time.UTC),
 				},
