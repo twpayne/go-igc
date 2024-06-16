@@ -24,7 +24,9 @@ func (e *Error) Unwrap() error {
 }
 
 // A Record is a record.
-type Record any
+type Record interface {
+	Valid() bool
+}
 
 // A Source is the data source of an H record.
 type Source byte
@@ -68,6 +70,8 @@ type ARecord struct {
 	AdditionalData         string
 }
 
+func (r ARecord) Valid() bool { return true }
+
 // A BRecord is a B record.
 type BRecord struct {
 	Time          time.Time
@@ -78,6 +82,8 @@ type BRecord struct {
 	AltBarometric float64
 	Additions     map[string]int
 }
+
+func (r BRecord) Valid() bool { return true }
 
 // A FirstCRecord is a first C record.
 type FirstCRecord struct {
@@ -90,6 +96,8 @@ type FirstCRecord struct {
 	Text               string
 }
 
+func (r FirstCRecord) Valid() bool { return true }
+
 // A CRecord is a C record.
 type CRecord struct {
 	Lat  float64
@@ -97,11 +105,15 @@ type CRecord struct {
 	Text string
 }
 
+func (r CRecord) Valid() bool { return true }
+
 // A DRecord is a D record.
 type DRecord struct {
 	GPSQualifier  GPSQualifier
 	DGPSStationID int
 }
+
+func (r DRecord) Valid() bool { return true }
 
 // An ERecord is an E record.
 type ERecord struct {
@@ -110,17 +122,23 @@ type ERecord struct {
 	Text string
 }
 
+func (r ERecord) Valid() bool { return true }
+
 // An ERecordWithoutTLC is an E record without a three-letter code.
 type ERecordWithoutTLC struct {
 	Time time.Time
 	Text string
 }
 
+func (r ERecordWithoutTLC) Valid() bool { return false }
+
 // An FRecord is an F record.
 type FRecord struct {
 	Time         time.Time
 	SatelliteIDs []int
 }
+
+func (r FRecord) Valid() bool { return true }
 
 // An HRecord is an H record.
 type HRecord struct {
@@ -130,6 +148,8 @@ type HRecord struct {
 	Value    string
 }
 
+func (r HRecord) Valid() bool { return true }
+
 // An HRecordWithInvalidSource is an H record.
 type HRecordWithInvalidSource struct {
 	Source   string
@@ -137,6 +157,8 @@ type HRecordWithInvalidSource struct {
 	LongName string
 	Value    string
 }
+
+func (r HRecordWithInvalidSource) Valid() bool { return false }
 
 // An HFDTERecord is an HFDTE record.
 type HFDTERecord struct {
@@ -150,15 +172,21 @@ type GRecord struct {
 	Text string
 }
 
+func (r GRecord) Valid() bool { return true } // FIXME use go-vali
+
 // An IRecord is an I record.
 type IRecord struct {
 	Additions []BKRecordAddition
 }
 
+func (r IRecord) Valid() bool { return true }
+
 // A JRecord is a J record.
 type JRecord struct {
 	Additions []BKRecordAddition
 }
+
+func (r JRecord) Valid() bool { return true }
 
 // A KRecord is a K record.
 type KRecord struct {
@@ -166,16 +194,22 @@ type KRecord struct {
 	Additions map[string]int
 }
 
+func (r KRecord) Valid() bool { return true }
+
 // An LRecord is an L record.
 type LRecord struct {
 	Input string
 	Text  string
 }
 
+func (r LRecord) Valid() bool { return true }
+
 // An LRecordWithoutTLC is an L record without a three-letter code.
 type LRecordWithoutTLC struct {
 	Text string
 }
+
+func (r LRecordWithoutTLC) Valid() bool { return false }
 
 // An IGC is a parsed IGC file.
 type IGC struct {
