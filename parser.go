@@ -228,7 +228,7 @@ func (p *parser) parseARecord(line []byte) (*ARecord, error) {
 	}
 	var aRecord ARecord
 	aRecord.ManufacturerID = string(m[1])
-	if _, ok := ApprovedManufacturersByThreeCharacterCode[string(m[1])]; ok {
+	if _, ok := ApprovedManufacturersByTLC[string(m[1])]; ok {
 		uniqueFlightRecorderID, additionalData, _ := bytes.Cut(m[2], []byte("-"))
 		aRecord.UniqueFlightRecorderID = string(uniqueFlightRecorderID)
 		aRecord.AdditionalData = string(additionalData)
