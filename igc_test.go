@@ -312,15 +312,14 @@ func TestParseLine(t *testing.T) {
 		{
 			name: "l_record_short",
 			line: "LCU::HPGTYGLIDERTYPE:SZD 55",
-			expectedRecord: &igc.LRecord{
-				Input: "CU",
-				Text:  "::HPGTYGLIDERTYPE:SZD 55",
+			expectedRecord: &igc.LRecordWithoutTLC{
+				Text: "CU::HPGTYGLIDERTYPE:SZD 55",
 			},
 		},
 		{
 			name:           "l_record_empty",
 			line:           "L",
-			expectedRecord: &igc.LRecord{},
+			expectedRecord: &igc.LRecordWithoutTLC{},
 		},
 		{
 			name:        "unknown_record",

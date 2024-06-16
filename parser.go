@@ -71,7 +71,8 @@ var (
 	gRecordRx                  = regexp.MustCompile(`\AG(.*)\z`)
 	ijRecordRx                 = regexp.MustCompile(`\A[IJ](\d{2})((?:\d{4}[A-Z]{3})*)\z`)
 	kRecordRx                  = regexp.MustCompile(`\AK(\d{2})(\d{2})(\d{2})(.*)\z`)
-	lRecordRx                  = regexp.MustCompile(`\AL([A-Z]{0,3})(.*)\z`)
+	lRecordRx                  = regexp.MustCompile(`\AL([A-Z]{3})(.*)\z`)
+	lRecordWithoutTLCRx        = regexp.MustCompile(`\AL(.*)\z`)
 )
 
 type parser struct {
@@ -552,9 +553,14 @@ func (p *parser) parseKRecord(line []byte) (*KRecord, error) {
 	return &kRecord, errors.Join(errs...)
 }
 
-func (p *parser) parseLRecord(line []byte) (*LRecord, error) {
+func (p *parser) parseLRecord(line []byte) (Record, error) {
 	m := lRecordRx.FindSubmatch(line)
 	if m == nil {
+		if m := lRecordWithoutTLCRx.FindSubmatch(line); m != nil {
+			var lRecord LRecordWithoutTLC
+			lRecord.Text = string(m[1])
+			return &lRecord, nil
+		}
 		return nil, invalidRecordError('L')
 	}
 	var lRecord LRecord

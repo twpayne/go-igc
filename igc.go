@@ -172,6 +172,11 @@ type LRecord struct {
 	Text  string
 }
 
+// An LRecordWithoutTLC is an L record without a three-letter code.
+type LRecordWithoutTLC struct {
+	Text string
+}
+
 // An IGC is a parsed IGC file.
 type IGC struct {
 	Records       []Record
