@@ -55,22 +55,23 @@ func (e unknownRecordTypeError) Error() string {
 }
 
 var (
-	aRecordRx           = regexp.MustCompile(`\AA([A-Z]{3})(.*)\z`)
-	bRecordRx           = regexp.MustCompile(`\AB(\d{2})(\d{2})(\d{2})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])([0-9\-]\d{4})([0-9\-]\d{4})(.*)\z`)
-	cRecordRx           = regexp.MustCompile(`\AC(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*)\z`)
-	firstCRecordRx      = regexp.MustCompile(`\AC(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([0-9\-]\d)(.*)\z`)
-	dRecordRx           = regexp.MustCompile(`\AD([12])(\d{4})\z`)
-	eRecordRx           = regexp.MustCompile(`\AE(\d{2})(\d{2})(\d{2})([A-Z]{3})(.*)\z`)
-	eRecordWithoutTLCRx = regexp.MustCompile(`\AE(\d{2})(\d{2})(\d{2})(.*)\z`)
-	fRecordRx           = regexp.MustCompile(`\AF(\d{2})(\d{2})(\d{2})((?:\d{2})*)\z`)
-	hRecordRx           = regexp.MustCompile(`\AH([A-Z])([0-9A-Z]{3})(.*?)(?::(.*))?\z`)
-	hfdteRecordRx       = regexp.MustCompile(`\AHFDTE(\d{2})(\d{2})(\d{2})\z`)
-	hfdteRecordValueRx  = regexp.MustCompile(`(\d{2})(\d{2})(\d{2})(?:,(\d{2}))?\z`)
-	hffxaRecordRx       = regexp.MustCompile(`\AHFFXA(\d+)\z`)
-	gRecordRx           = regexp.MustCompile(`\AG(.*)\z`)
-	ijRecordRx          = regexp.MustCompile(`\A[IJ](\d{2})((?:\d{4}[A-Z]{3})*)\z`)
-	kRecordRx           = regexp.MustCompile(`\AK(\d{2})(\d{2})(\d{2})(.*)\z`)
-	lRecordRx           = regexp.MustCompile(`\AL([A-Z]{0,3})(.*)\z`)
+	aRecordRx                  = regexp.MustCompile(`\AA([A-Z]{3})(.*)\z`)
+	bRecordRx                  = regexp.MustCompile(`\AB(\d{2})(\d{2})(\d{2})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])([0-9\-]\d{4})([0-9\-]\d{4})(.*)\z`)
+	cRecordRx                  = regexp.MustCompile(`\AC(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*)\z`)
+	firstCRecordRx             = regexp.MustCompile(`\AC(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([0-9\-]\d)(.*)\z`)
+	dRecordRx                  = regexp.MustCompile(`\AD([12])(\d{4})\z`)
+	eRecordRx                  = regexp.MustCompile(`\AE(\d{2})(\d{2})(\d{2})([A-Z]{3})(.*)\z`)
+	eRecordWithoutTLCRx        = regexp.MustCompile(`\AE(\d{2})(\d{2})(\d{2})(.*)\z`)
+	fRecordRx                  = regexp.MustCompile(`\AF(\d{2})(\d{2})(\d{2})((?:\d{2})*)\z`)
+	hRecordRx                  = regexp.MustCompile(`\AH([FOP])([0-9A-Z]{3})(.*?)(?::(.*))?\z`)
+	hRecordWithInvalidSourceRx = regexp.MustCompile(`\AH([A-Z])([0-9A-Z]{3})(.*?)(?::(.*))?\z`)
+	hfdteRecordRx              = regexp.MustCompile(`\AHFDTE(\d{2})(\d{2})(\d{2})\z`)
+	hfdteRecordValueRx         = regexp.MustCompile(`(\d{2})(\d{2})(\d{2})(?:,(\d{2}))?\z`)
+	hffxaRecordRx              = regexp.MustCompile(`\AHFFXA(\d+)\z`)
+	gRecordRx                  = regexp.MustCompile(`\AG(.*)\z`)
+	ijRecordRx                 = regexp.MustCompile(`\A[IJ](\d{2})((?:\d{4}[A-Z]{3})*)\z`)
+	kRecordRx                  = regexp.MustCompile(`\AK(\d{2})(\d{2})(\d{2})(.*)\z`)
+	lRecordRx                  = regexp.MustCompile(`\AL([A-Z]{0,3})(.*)\z`)
 )
 
 type parser struct {
@@ -438,6 +439,14 @@ func (p *parser) parseHRecord(line []byte) (Record, error) {
 	}
 	m := hRecordRx.FindSubmatch(line)
 	if m == nil {
+		if m := hRecordWithInvalidSourceRx.FindSubmatch(line); m != nil {
+			var hRecordWithInvalidSource HRecordWithInvalidSource
+			hRecordWithInvalidSource.Source = string(m[1][0])
+			hRecordWithInvalidSource.TLC = string(m[2])
+			hRecordWithInvalidSource.LongName = string(m[3])
+			hRecordWithInvalidSource.Value = string(m[4])
+			return &hRecordWithInvalidSource, nil
+		}
 		return nil, invalidRecordError('H')
 	}
 	var hRecord HRecord

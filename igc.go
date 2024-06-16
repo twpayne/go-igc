@@ -130,6 +130,14 @@ type HRecord struct {
 	Value    string
 }
 
+// An HRecordWithInvalidSource is an H record.
+type HRecordWithInvalidSource struct {
+	Source   string
+	TLC      string
+	LongName string
+	Value    string
+}
+
 // An HFDTERecord is an HFDTE record.
 type HFDTERecord struct {
 	HRecord

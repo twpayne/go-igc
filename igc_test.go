@@ -214,6 +214,16 @@ func TestParseLine(t *testing.T) {
 			expectedErr: "1: invalid H record",
 		},
 		{
+			name: "h_record_invalid_source",
+			line: "HSCCLCOMPETITION CLASS:FAI-3 (PG)",
+			expectedRecord: &igc.HRecordWithInvalidSource{
+				Source:   "S",
+				TLC:      "CCL",
+				LongName: "COMPETITION CLASS",
+				Value:    "FAI-3 (PG)",
+			},
+		},
+		{
 			name:        "hfdte_record_invalid",
 			line:        "HFDTE",
 			expectedErr: "1: invalid H record",
