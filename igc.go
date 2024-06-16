@@ -110,6 +110,12 @@ type ERecord struct {
 	Text string
 }
 
+// An ERecordWithoutTLC is an E record without a three-letter code.
+type ERecordWithoutTLC struct {
+	Time time.Time
+	Text string
+}
+
 // An FRecord is an F record.
 type FRecord struct {
 	Time         time.Time

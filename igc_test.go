@@ -605,6 +605,28 @@ func TestParseLines(t *testing.T) {
 			},
 		},
 		{
+			name: "e_record_flyskyhy",
+			lines: []string{
+				"HFDTE090224",
+				"E030428Waypoint Waypoint reached",
+			},
+			expectedRecords: []igc.Record{
+				&igc.HFDTERecord{
+					HRecord: igc.HRecord{
+						Source:   igc.SourceFlightRecorder,
+						TLC:      "DTE",
+						LongName: "DATE",
+						Value:    "090224",
+					},
+					Date: time.Date(2024, time.February, 9, 0, 0, 0, 0, time.UTC),
+				},
+				&igc.ERecordWithoutTLC{
+					Time: time.Date(2024, time.February, 9, 3, 4, 28, 0, time.UTC),
+					Text: "Waypoint Waypoint reached", //nolint:dupword
+				},
+			},
+		},
+		{
 			name: "k_record",
 			lines: []string{
 				"HFDTEDATE:040624,01",
@@ -916,30 +938,8 @@ func TestParseLines(t *testing.T) {
 func TestParseTestData(t *testing.T) {
 	t.Parallel()
 	expectedErrorsByName := map[string][]string{
-		"0040.igc": {
-			"931: invalid E record",
-		},
-		"0072.igc": {
-			"323: invalid E record",
-		},
-		"0114.igc": {
-			"70: invalid E record",
-			"618: invalid E record",
-			"1130: invalid E record",
-			"1131: invalid E record",
-		},
-		"0211.igc": {
-			"116: invalid E record",
-		},
-		"0253.igc": {
-			"2450: invalid E record",
-		},
 		"2017_08_31_00_14_21_88GGB291.IGC": {
 			`8722: "\x1A": unknown record type`,
-		},
-		"2024-02-09-XFH-000-01.IGC": {
-			"12080: invalid E record",
-			"25913: invalid E record",
 		},
 	}
 	dirEntries, err := os.ReadDir("testdata")
