@@ -114,7 +114,7 @@ func (p *parser) parse(r io.Reader) (*IGC, error) {
 }
 
 func (p *parser) parseLines(lines []string) (*IGC, error) {
-	var records []Record
+	records := make([]Record, 0, len(lines))
 	var bRecords []*BRecord
 	hRecordsByTLC := make(map[string]*HRecord)
 	var kRecords []*KRecord
