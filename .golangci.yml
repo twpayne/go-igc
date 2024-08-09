@@ -47,7 +47,6 @@ linters:
   - loggercheck
   - makezero
   - misspell
-  - musttag
   - nakedret
   - nestif
   - nilerr
@@ -65,13 +64,11 @@ linters:
   - sqlclosecheck
   - staticcheck
   - stylecheck
-  - tagliatelle
   - tenv
   - thelper
   - tparallel
   - typecheck
   - unconvert
-  - unparam
   - unused
   - usestdlibvars
   - wastedassign
@@ -91,10 +88,13 @@ linters:
   - ireturn
   - lll
   - maintidx
+  - musttag
   - nlreturn
   - paralleltest
+  - tagliatelle
   - testableexamples
   - testpackage
+  - unparam
   - varnamelen
   - wrapcheck
   - wsl
