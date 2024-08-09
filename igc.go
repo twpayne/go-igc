@@ -27,6 +27,7 @@ func (e *Error) Unwrap() error {
 
 // A Record is a record.
 type Record interface {
+	Type() byte
 	Valid() bool
 }
 
@@ -72,6 +73,7 @@ type ARecord struct {
 	AdditionalData         string
 }
 
+func (r ARecord) Type() byte  { return 'A' }
 func (r ARecord) Valid() bool { return true }
 
 // A BRecord is a B record.
@@ -85,6 +87,7 @@ type BRecord struct {
 	Additions     map[string]int
 }
 
+func (r BRecord) Type() byte  { return 'B' }
 func (r BRecord) Valid() bool { return true }
 
 // A FirstCRecord is a first C record.
@@ -98,6 +101,7 @@ type FirstCRecord struct {
 	Text               string
 }
 
+func (r FirstCRecord) Type() byte  { return 'C' }
 func (r FirstCRecord) Valid() bool { return true }
 
 // A CRecord is a C record.
@@ -107,6 +111,7 @@ type CRecord struct {
 	Text string
 }
 
+func (r CRecord) Type() byte  { return 'C' }
 func (r CRecord) Valid() bool { return true }
 
 // A DRecord is a D record.
@@ -115,6 +120,7 @@ type DRecord struct {
 	DGPSStationID int
 }
 
+func (r DRecord) Type() byte  { return 'D' }
 func (r DRecord) Valid() bool { return true }
 
 // An ERecord is an E record.
@@ -124,6 +130,7 @@ type ERecord struct {
 	Text string
 }
 
+func (r ERecord) Type() byte  { return 'E' }
 func (r ERecord) Valid() bool { return true }
 
 // An ERecordWithoutTLC is an E record without a three-letter code.
@@ -132,6 +139,7 @@ type ERecordWithoutTLC struct {
 	Text string
 }
 
+func (r ERecordWithoutTLC) Type() byte  { return 'E' }
 func (r ERecordWithoutTLC) Valid() bool { return false }
 
 // An FRecord is an F record.
@@ -140,6 +148,7 @@ type FRecord struct {
 	SatelliteIDs []int
 }
 
+func (r FRecord) Type() byte  { return 'F' }
 func (r FRecord) Valid() bool { return true }
 
 // An HRecord is an H record.
@@ -150,6 +159,7 @@ type HRecord struct {
 	Value    string
 }
 
+func (r HRecord) Type() byte  { return 'H' }
 func (r HRecord) Valid() bool { return true }
 
 // An HRecordWithInvalidSource is an H record.
@@ -160,6 +170,7 @@ type HRecordWithInvalidSource struct {
 	Value    string
 }
 
+func (r HRecordWithInvalidSource) Type() byte  { return 'H' }
 func (r HRecordWithInvalidSource) Valid() bool { return false }
 
 // An HFDTERecord is an HFDTE record.
@@ -174,6 +185,7 @@ type GRecord struct {
 	Text string
 }
 
+func (r GRecord) Type() byte  { return 'G' }
 func (r GRecord) Valid() bool { return true } // FIXME use go-vali
 
 // An IRecord is an I record.
@@ -181,6 +193,7 @@ type IRecord struct {
 	Additions []BKRecordAddition
 }
 
+func (r IRecord) Type() byte  { return 'I' }
 func (r IRecord) Valid() bool { return true }
 
 // A JRecord is a J record.
@@ -188,6 +201,7 @@ type JRecord struct {
 	Additions []BKRecordAddition
 }
 
+func (r JRecord) Type() byte  { return 'J' }
 func (r JRecord) Valid() bool { return true }
 
 // A KRecord is a K record.
@@ -196,6 +210,7 @@ type KRecord struct {
 	Additions map[string]int
 }
 
+func (r KRecord) Type() byte  { return 'K' }
 func (r KRecord) Valid() bool { return true }
 
 // An LRecord is an L record.
@@ -204,6 +219,7 @@ type LRecord struct {
 	Text  string
 }
 
+func (r LRecord) Type() byte  { return 'L' }
 func (r LRecord) Valid() bool { return true }
 
 // An LRecordWithoutTLC is an L record without a three-letter code.
@@ -211,6 +227,7 @@ type LRecordWithoutTLC struct {
 	Text string
 }
 
+func (r LRecordWithoutTLC) Type() byte  { return 'L' }
 func (r LRecordWithoutTLC) Valid() bool { return false }
 
 // An IGC is a parsed IGC file.
