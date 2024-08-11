@@ -35,8 +35,9 @@ type KSummary struct {
 type Summary struct {
 	Filename      string
 	Size          int64
-	BRecordFreq   float64
-	KRecordFreq   float64
+	ByteRate      float64
+	BRecordFreq   float64 `json:",omitempty"`
+	KRecordFreq   float64 `json:",omitempty"`
 	Records       int
 	RecordCounts  map[string]int
 	HRecordsByTLC map[string]string
@@ -72,7 +73,11 @@ func summarizeFile(filename string) (*Summary, error) {
 
 	recordCounts := make(map[string]int)
 	for _, record := range igc.Records {
-		recordCounts[string(record.Type())]++
+		if record == nil {
+			recordCounts["invalid"]++
+		} else {
+			recordCounts[string(record.Type())]++
+		}
 	}
 
 	hRecordsByTLC := make(map[string]string, len(igc.HRecordsByTLC))
@@ -80,6 +85,7 @@ func summarizeFile(filename string) (*Summary, error) {
 		hRecordsByTLC[tlc] = hRecord.Value
 	}
 
+	var bRecordFreq float64
 	var bSummary *BSummary
 	if len(igc.BRecords) > 0 {
 		bRecordTimeDeltas := make(map[int]int)
@@ -109,6 +115,7 @@ func summarizeFile(filename string) (*Summary, error) {
 				}
 			}
 		}
+		bRecordFreq = float64(len(igc.BRecords)-1) * float64(time.Second) / float64(duration)
 		bSummary = &BSummary{
 			Duration: friendlyDuration(duration),
 			Time: Range[time.Time]{
@@ -124,6 +131,7 @@ func summarizeFile(filename string) (*Summary, error) {
 		}
 	}
 
+	var kRecordFreq float64
 	var kSummary *KSummary
 	if len(igc.KRecords) > 0 {
 		kRecordTimeDeltas := make(map[int]int)
@@ -141,6 +149,7 @@ func summarizeFile(filename string) (*Summary, error) {
 				}
 			}
 		}
+		kRecordFreq = float64(len(igc.KRecords)-1) * float64(time.Second) / float64(duration)
 		kSummary = &KSummary{
 			TimeDeltas: kRecordTimeDeltas,
 			Additions:  kAdditionRanges,
@@ -150,8 +159,9 @@ func summarizeFile(filename string) (*Summary, error) {
 	return &Summary{
 		Filename:      filename,
 		Size:          fileInfo.Size(),
-		BRecordFreq:   float64(len(igc.BRecords)-1) * float64(time.Second) / float64(duration),
-		KRecordFreq:   float64(len(igc.KRecords)-1) * float64(time.Second) / float64(duration),
+		ByteRate:      float64(fileInfo.Size()) * float64(time.Second) / float64(duration),
+		BRecordFreq:   bRecordFreq,
+		KRecordFreq:   kRecordFreq,
 		Records:       len(igc.Records),
 		RecordCounts:  recordCounts,
 		HRecordsByTLC: hRecordsByTLC,
