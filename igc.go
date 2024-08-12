@@ -3,8 +3,6 @@
 // See https://www.fai.org/sites/default/files/igc_fr_specification_with_al8_2023-2-1_0.pdf.
 package igc
 
-// FIXME merge https://github.com/twpayne/go-vali into this project
-
 import (
 	"io"
 	"strconv"
@@ -185,8 +183,15 @@ type GRecord struct {
 	Text string
 }
 
-func (r GRecord) Type() byte  { return 'G' }
-func (r GRecord) Valid() bool { return true } // FIXME use go-vali
+func (r GRecord) Type() byte { return 'G' }
+
+// Valid returns whether the G record does not have any syntax errors. Since G
+// records have freeform text, they never contain syntax errors, so this
+// function always returns true.
+//
+// To determine whether a G record is valid cryptographically, use
+// [github.com/twpayne/go-igc/civlovs] instead.
+func (r GRecord) Valid() bool { return true }
 
 // An IRecord is an I record.
 type IRecord struct {
