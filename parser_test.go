@@ -69,3 +69,50 @@ func TestIntPow(t *testing.T) {
 		})
 	}
 }
+
+func TestReservedCharacters(t *testing.T) {
+	for c, expected := range map[byte]bool{
+		'\r':   true,
+		'\n':   true,
+		' ':    false,
+		'!':    true,
+		'"':    false,
+		'#':    false,
+		'$':    true,
+		'%':    false,
+		'&':    false,
+		'\'':   false,
+		'(':    false,
+		')':    false,
+		'0':    false,
+		'9':    false,
+		':':    false,
+		';':    false,
+		'<':    false,
+		'=':    false,
+		'>':    false,
+		'?':    false,
+		'@':    false,
+		'A':    false,
+		'Z':    false,
+		'[':    false,
+		'\\':   true,
+		']':    false,
+		'^':    true,
+		'_':    false,
+		'`':    false,
+		'a':    false,
+		'z':    false,
+		'{':    false,
+		'|':    false,
+		'}':    false,
+		'~':    true,
+		'*':    true,
+		'\x80': true,
+		'\xff': true,
+	} {
+		t.Run(string(c), func(t *testing.T) {
+			assert.Equal(t, expected, invalidCharsRx.MatchString(string(c)))
+		})
+	}
+}

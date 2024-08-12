@@ -245,11 +245,11 @@ type IGC struct {
 }
 
 // Parse parses an IGC from r.
-func Parse(r io.Reader) (*IGC, error) {
-	return newParser().parse(r)
+func Parse(r io.Reader, options ...ParseOption) (*IGC, error) {
+	return newParser(options...).parse(r)
 }
 
 // Parse parses an IGC from lines.
-func ParseLines(lines []string) (*IGC, error) {
-	return newParser().parseLines(lines)
+func ParseLines(lines []string, options ...ParseOption) (*IGC, error) {
+	return newParser(options...).parseLines(lines)
 }

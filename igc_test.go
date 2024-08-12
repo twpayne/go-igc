@@ -329,7 +329,7 @@ func TestParseLine(t *testing.T) {
 		{
 			name:        "unknown_record_null",
 			line:        "\x00",
-			expectedErr: `1: "\x00": unknown record type`,
+			expectedErr: "1: \"\\x00\": unknown record type\n'\\x00': invalid character",
 		},
 		{
 			name: "empty line",
@@ -953,7 +953,9 @@ func TestParseTestData(t *testing.T) {
 			file, err := os.Open(filepath.Join("testdata", name))
 			assert.NoError(t, err)
 			defer file.Close()
-			igc, err := igc.Parse(file)
+			igc, err := igc.Parse(file,
+				igc.WithAllowInvalidChars(true),
+			)
 			assert.NoError(t, err)
 			assertEqualErrors(t, expectedErrorsByName[name], igc.Errs)
 		})

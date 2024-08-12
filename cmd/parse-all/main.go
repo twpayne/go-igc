@@ -15,7 +15,11 @@ import (
 var igcExtensionRx = regexp.MustCompile(`(?i)\.igc\z`)
 
 func run() error {
+	allowInvalidChars := flag.Bool("allow-invalid-chars", true, "allow invalid characters")
 	flag.Parse()
+	options := []igc.ParseOption{
+		igc.WithAllowInvalidChars(*allowInvalidChars),
+	}
 	for _, arg := range flag.Args() {
 		if err := fs.WalkDir(os.DirFS(arg), ".", func(path string, dirEntry fs.DirEntry, err error) error {
 			if err != nil {
@@ -32,7 +36,7 @@ func run() error {
 				return err
 			}
 			defer file.Close()
-			igcFile, err := igc.Parse(file)
+			igcFile, err := igc.Parse(file, options...)
 			if err != nil {
 				return err
 			}

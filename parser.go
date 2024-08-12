@@ -55,6 +55,8 @@ func (e unknownRecordTypeError) Error() string {
 }
 
 var (
+	invalidCharsRx = regexp.MustCompile(`([^\x20\x22-\x23\x25-\x29\x2b-\x5b\x5d\x5f-\x7d])`)
+
 	aRecordRx                  = regexp.MustCompile(`\AA([A-Z]{3})(.*)\z`)
 	bRecordRx                  = regexp.MustCompile(`\AB(\d{2})(\d{2})(\d{2})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])([0-9\-]\d{4})([0-9\-]\d{4})(.*)\z`)
 	cRecordRx                  = regexp.MustCompile(`\AC(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*)\z`)
@@ -76,6 +78,7 @@ var (
 )
 
 type parser struct {
+	allowInvalidChars      bool
 	date                   time.Time
 	prevTime               time.Time
 	cRecords               []Record
@@ -92,8 +95,16 @@ type parser struct {
 	kRecordAdditions       []BKRecordAddition
 }
 
-func newParser() *parser {
-	return &parser{
+type ParseOption func(*parser)
+
+func WithAllowInvalidChars(allowInvalidChars bool) ParseOption {
+	return func(p *parser) {
+		p.allowInvalidChars = allowInvalidChars
+	}
+}
+
+func newParser(options ...ParseOption) *parser {
+	p := &parser{
 		bRecordsAdditionsByTLC: make(map[string]*BKRecordAddition),
 		latMinMul:              1,
 		latMinDiv:              6e4,
@@ -101,6 +112,10 @@ func newParser() *parser {
 		lonMinDiv:              6e4,
 		fracSecondMul:          1e9,
 	}
+	for _, o := range options {
+		o(p)
+	}
+	return p
 }
 
 func (p *parser) parse(r io.Reader) (*IGC, error) {
@@ -157,6 +172,22 @@ func (p *parser) parseLines(lines []string) (*IGC, error) {
 			record, err = p.parseLRecord(line)
 		default:
 			err = unknownRecordTypeError(line[0])
+		}
+		if !p.allowInvalidChars {
+			if match := invalidCharsRx.FindStringSubmatch(lineStr); match != nil {
+				invalidChar := match[1][0]
+				var invalidCharErr error
+				if '\x20' <= invalidChar && invalidChar <= '\x7f' {
+					invalidCharErr = fmt.Errorf("'%c': invalid character", invalidChar)
+				} else {
+					invalidCharErr = fmt.Errorf("'\\x%02x': invalid character", invalidChar)
+				}
+				if err == nil {
+					err = invalidCharErr
+				} else {
+					err = errors.Join(err, invalidCharErr)
+				}
+			}
 		}
 		records = append(records, record)
 		if err != nil {
