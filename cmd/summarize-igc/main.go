@@ -73,10 +73,10 @@ func summarizeFile(filename string) (*Summary, error) {
 
 	recordCounts := make(map[string]int)
 	for _, record := range igc.Records {
-		if record == nil {
-			recordCounts["invalid"]++
-		} else {
+		if record.Valid() {
 			recordCounts[string(record.Type())]++
+		} else {
+			recordCounts["invalid"]++
 		}
 	}
 

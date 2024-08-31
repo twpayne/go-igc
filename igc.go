@@ -71,8 +71,8 @@ type ARecord struct {
 	AdditionalData         string
 }
 
-func (r ARecord) Type() byte  { return 'A' }
-func (r ARecord) Valid() bool { return true }
+func (r *ARecord) Type() byte  { return 'A' }
+func (r *ARecord) Valid() bool { return r != nil }
 
 // A BRecord is a B record.
 type BRecord struct {
@@ -85,8 +85,8 @@ type BRecord struct {
 	Additions     map[string]int
 }
 
-func (r BRecord) Type() byte  { return 'B' }
-func (r BRecord) Valid() bool { return true }
+func (r *BRecord) Type() byte  { return 'B' }
+func (r *BRecord) Valid() bool { return r != nil }
 
 // A FirstCRecord is a first C record.
 type FirstCRecord struct {
@@ -99,8 +99,8 @@ type FirstCRecord struct {
 	Text               string
 }
 
-func (r FirstCRecord) Type() byte  { return 'C' }
-func (r FirstCRecord) Valid() bool { return true }
+func (r *FirstCRecord) Type() byte  { return 'C' }
+func (r *FirstCRecord) Valid() bool { return r != nil }
 
 // A CRecord is a C record.
 type CRecord struct {
@@ -109,8 +109,8 @@ type CRecord struct {
 	Text string
 }
 
-func (r CRecord) Type() byte  { return 'C' }
-func (r CRecord) Valid() bool { return true }
+func (r *CRecord) Type() byte  { return 'C' }
+func (r *CRecord) Valid() bool { return r != nil }
 
 // A DRecord is a D record.
 type DRecord struct {
@@ -118,8 +118,8 @@ type DRecord struct {
 	DGPSStationID int
 }
 
-func (r DRecord) Type() byte  { return 'D' }
-func (r DRecord) Valid() bool { return true }
+func (r *DRecord) Type() byte  { return 'D' }
+func (r *DRecord) Valid() bool { return r != nil }
 
 // An ERecord is an E record.
 type ERecord struct {
@@ -128,8 +128,8 @@ type ERecord struct {
 	Text string
 }
 
-func (r ERecord) Type() byte  { return 'E' }
-func (r ERecord) Valid() bool { return true }
+func (r *ERecord) Type() byte  { return 'E' }
+func (r *ERecord) Valid() bool { return r != nil }
 
 // An ERecordWithoutTLC is an E record without a three-letter code.
 type ERecordWithoutTLC struct {
@@ -137,8 +137,8 @@ type ERecordWithoutTLC struct {
 	Text string
 }
 
-func (r ERecordWithoutTLC) Type() byte  { return 'E' }
-func (r ERecordWithoutTLC) Valid() bool { return false }
+func (r *ERecordWithoutTLC) Type() byte  { return 'E' }
+func (r *ERecordWithoutTLC) Valid() bool { return false }
 
 // An FRecord is an F record.
 type FRecord struct {
@@ -146,8 +146,8 @@ type FRecord struct {
 	SatelliteIDs []int
 }
 
-func (r FRecord) Type() byte  { return 'F' }
-func (r FRecord) Valid() bool { return true }
+func (r *FRecord) Type() byte  { return 'F' }
+func (r *FRecord) Valid() bool { return r != nil }
 
 // An HRecord is an H record.
 type HRecord struct {
@@ -157,8 +157,8 @@ type HRecord struct {
 	Value    string
 }
 
-func (r HRecord) Type() byte  { return 'H' }
-func (r HRecord) Valid() bool { return true }
+func (r *HRecord) Type() byte  { return 'H' }
+func (r *HRecord) Valid() bool { return r != nil }
 
 // An HRecordWithInvalidSource is an H record.
 type HRecordWithInvalidSource struct {
@@ -168,8 +168,8 @@ type HRecordWithInvalidSource struct {
 	Value    string
 }
 
-func (r HRecordWithInvalidSource) Type() byte  { return 'H' }
-func (r HRecordWithInvalidSource) Valid() bool { return false }
+func (r *HRecordWithInvalidSource) Type() byte  { return 'H' }
+func (r *HRecordWithInvalidSource) Valid() bool { return false }
 
 // An HFDTERecord is an HFDTE record.
 type HFDTERecord struct {
@@ -183,7 +183,7 @@ type GRecord struct {
 	Text string
 }
 
-func (r GRecord) Type() byte { return 'G' }
+func (r *GRecord) Type() byte { return 'G' }
 
 // Valid returns whether the G record does not have any syntax errors. Since G
 // records have freeform text, they never contain syntax errors, so this
@@ -191,23 +191,23 @@ func (r GRecord) Type() byte { return 'G' }
 //
 // To determine whether a G record is valid cryptographically, use
 // [github.com/twpayne/go-igc/civlovs] instead.
-func (r GRecord) Valid() bool { return true }
+func (r *GRecord) Valid() bool { return r != nil }
 
 // An IRecord is an I record.
 type IRecord struct {
 	Additions []BKRecordAddition
 }
 
-func (r IRecord) Type() byte  { return 'I' }
-func (r IRecord) Valid() bool { return true }
+func (r *IRecord) Type() byte  { return 'I' }
+func (r *IRecord) Valid() bool { return r != nil }
 
 // A JRecord is a J record.
 type JRecord struct {
 	Additions []BKRecordAddition
 }
 
-func (r JRecord) Type() byte  { return 'J' }
-func (r JRecord) Valid() bool { return true }
+func (r *JRecord) Type() byte  { return 'J' }
+func (r *JRecord) Valid() bool { return r != nil }
 
 // A KRecord is a K record.
 type KRecord struct {
@@ -215,8 +215,8 @@ type KRecord struct {
 	Additions map[string]int
 }
 
-func (r KRecord) Type() byte  { return 'K' }
-func (r KRecord) Valid() bool { return true }
+func (r *KRecord) Type() byte  { return 'K' }
+func (r *KRecord) Valid() bool { return r != nil }
 
 // An LRecord is an L record.
 type LRecord struct {
@@ -224,16 +224,16 @@ type LRecord struct {
 	Text  string
 }
 
-func (r LRecord) Type() byte  { return 'L' }
-func (r LRecord) Valid() bool { return true }
+func (r *LRecord) Type() byte  { return 'L' }
+func (r *LRecord) Valid() bool { return r != nil }
 
 // An LRecordWithoutTLC is an L record without a three-letter code.
 type LRecordWithoutTLC struct {
 	Text string
 }
 
-func (r LRecordWithoutTLC) Type() byte  { return 'L' }
-func (r LRecordWithoutTLC) Valid() bool { return false }
+func (r *LRecordWithoutTLC) Type() byte  { return 'L' }
+func (r *LRecordWithoutTLC) Valid() bool { return false }
 
 // An IGC is a parsed IGC file.
 type IGC struct {
