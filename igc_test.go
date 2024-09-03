@@ -1,6 +1,7 @@
 package igc_test
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"testing"
@@ -1102,6 +1103,19 @@ func TestParseTestData(t *testing.T) {
 			assertEqualErrors(t, expectedErrorsByName[name], igc.Errs)
 		})
 	}
+}
+
+func FuzzParse(f *testing.F) {
+	dirEntries, err := os.ReadDir("testdata")
+	assert.NoError(f, err)
+	for _, dirEntry := range dirEntries {
+		data, err := os.ReadFile(filepath.Join("testdata", dirEntry.Name()))
+		assert.NoError(f, err)
+		f.Add(data)
+	}
+	f.Fuzz(func(_ *testing.T, data []byte) {
+		_, _ = igc.Parse(bytes.NewReader(data))
+	})
 }
 
 func assertEqualErrors(t *testing.T, expectedErrs []string, errs []error) {
