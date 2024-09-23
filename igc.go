@@ -152,6 +152,21 @@ type FRecord struct {
 func (r *FRecord) Type() byte  { return 'F' }
 func (r *FRecord) Valid() bool { return r != nil }
 
+// A GRecord is a G record, which is a security record.
+type GRecord struct {
+	Text string
+}
+
+func (r *GRecord) Type() byte { return 'G' }
+
+// Valid returns whether the G record does not have any syntax errors. Since G
+// records have freeform text, they never contain syntax errors, so this
+// function always returns true.
+//
+// To determine whether a G record is valid cryptographically, use
+// [github.com/twpayne/go-igc/civlovs] instead.
+func (r *GRecord) Valid() bool { return r != nil }
+
 // An HRecord is an H record, which is a header.
 type HRecord struct {
 	Source   Source
@@ -180,21 +195,6 @@ type HFDTERecord struct {
 	Date         time.Time
 	FlightNumber int
 }
-
-// A GRecord is a G record, which is a security record.
-type GRecord struct {
-	Text string
-}
-
-func (r *GRecord) Type() byte { return 'G' }
-
-// Valid returns whether the G record does not have any syntax errors. Since G
-// records have freeform text, they never contain syntax errors, so this
-// function always returns true.
-//
-// To determine whether a G record is valid cryptographically, use
-// [github.com/twpayne/go-igc/civlovs] instead.
-func (r *GRecord) Valid() bool { return r != nil }
 
 // An IRecord is an I record, which contains additions to B records.
 type IRecord struct {
