@@ -64,7 +64,7 @@ type BKRecordAddition struct {
 	FinishColumn int
 }
 
-// An ARecord is an A record.
+// An ARecord is an A record, which identifies the flight recorder.
 type ARecord struct {
 	ManufacturerID         string
 	UniqueFlightRecorderID string
@@ -74,7 +74,7 @@ type ARecord struct {
 func (r *ARecord) Type() byte  { return 'A' }
 func (r *ARecord) Valid() bool { return r != nil }
 
-// A BRecord is a B record.
+// A BRecord is a B record, which contains a fix.
 type BRecord struct {
 	Time          time.Time
 	Lat           float64
@@ -88,7 +88,8 @@ type BRecord struct {
 func (r *BRecord) Type() byte  { return 'B' }
 func (r *BRecord) Valid() bool { return r != nil }
 
-// A FirstCRecord is a first C record.
+// A FirstCRecord is a first C record, which contains the first line of a
+// pre-declared task.
 type FirstCRecord struct {
 	DeclarationTime    time.Time
 	FlightYear         int
@@ -102,7 +103,7 @@ type FirstCRecord struct {
 func (r *FirstCRecord) Type() byte  { return 'C' }
 func (r *FirstCRecord) Valid() bool { return r != nil }
 
-// A CRecord is a C record.
+// A CRecord is a C record, which contains a pre-declared task.
 type CRecord struct {
 	Lat  float64
 	Lon  float64
@@ -112,7 +113,7 @@ type CRecord struct {
 func (r *CRecord) Type() byte  { return 'C' }
 func (r *CRecord) Valid() bool { return r != nil }
 
-// A DRecord is a D record.
+// A DRecord is a D record, which contains differential GPS information.
 type DRecord struct {
 	GPSQualifier  GPSQualifier
 	DGPSStationID int
@@ -121,7 +122,7 @@ type DRecord struct {
 func (r *DRecord) Type() byte  { return 'D' }
 func (r *DRecord) Valid() bool { return r != nil }
 
-// An ERecord is an E record.
+// An ERecord is an E record, which contains an event.
 type ERecord struct {
 	Time time.Time
 	TLC  string
@@ -131,7 +132,8 @@ type ERecord struct {
 func (r *ERecord) Type() byte  { return 'E' }
 func (r *ERecord) Valid() bool { return r != nil }
 
-// An ERecordWithoutTLC is an E record without a three-letter code.
+// An ERecordWithoutTLC is an E record without a three-letter code, which
+// contains an event.
 type ERecordWithoutTLC struct {
 	Time time.Time
 	Text string
@@ -140,7 +142,8 @@ type ERecordWithoutTLC struct {
 func (r *ERecordWithoutTLC) Type() byte  { return 'E' }
 func (r *ERecordWithoutTLC) Valid() bool { return false }
 
-// An FRecord is an F record.
+// An FRecord is an F record, which contains satellite constellation
+// information.
 type FRecord struct {
 	Time         time.Time
 	SatelliteIDs []int
@@ -149,7 +152,7 @@ type FRecord struct {
 func (r *FRecord) Type() byte  { return 'F' }
 func (r *FRecord) Valid() bool { return r != nil }
 
-// An HRecord is an H record.
+// An HRecord is an H record, which is a header.
 type HRecord struct {
 	Source   Source
 	TLC      string
@@ -160,7 +163,7 @@ type HRecord struct {
 func (r *HRecord) Type() byte  { return 'H' }
 func (r *HRecord) Valid() bool { return r != nil }
 
-// An HRecordWithInvalidSource is an H record.
+// An HRecordWithInvalidSource is an H record, which is a header.
 type HRecordWithInvalidSource struct {
 	Source   string
 	TLC      string
@@ -171,14 +174,14 @@ type HRecordWithInvalidSource struct {
 func (r *HRecordWithInvalidSource) Type() byte  { return 'H' }
 func (r *HRecordWithInvalidSource) Valid() bool { return false }
 
-// An HFDTERecord is an HFDTE record.
+// An HFDTERecord is an HFDTE record, which is a header containing the date.
 type HFDTERecord struct {
 	HRecord
 	Date         time.Time
 	FlightNumber int
 }
 
-// A GRecord is a G record.
+// A GRecord is a G record, which is a security record.
 type GRecord struct {
 	Text string
 }
@@ -193,7 +196,7 @@ func (r *GRecord) Type() byte { return 'G' }
 // [github.com/twpayne/go-igc/civlovs] instead.
 func (r *GRecord) Valid() bool { return r != nil }
 
-// An IRecord is an I record.
+// An IRecord is an I record, which contains additions to B records.
 type IRecord struct {
 	Additions []BKRecordAddition
 }
@@ -201,7 +204,7 @@ type IRecord struct {
 func (r *IRecord) Type() byte  { return 'I' }
 func (r *IRecord) Valid() bool { return r != nil }
 
-// A JRecord is a J record.
+// A JRecord is a J record, which contains additions to K records.
 type JRecord struct {
 	Additions []BKRecordAddition
 }
@@ -209,7 +212,8 @@ type JRecord struct {
 func (r *JRecord) Type() byte  { return 'J' }
 func (r *JRecord) Valid() bool { return r != nil }
 
-// A KRecord is a K record.
+// A KRecord is a K record, which contains information needed less frequently
+// than fixes.
 type KRecord struct {
 	Time      time.Time
 	Additions map[string]int
@@ -218,7 +222,7 @@ type KRecord struct {
 func (r *KRecord) Type() byte  { return 'K' }
 func (r *KRecord) Valid() bool { return r != nil }
 
-// An LRecord is an L record.
+// An LRecord is an L record, which contains a log message.
 type LRecord struct {
 	Input string
 	Text  string
@@ -227,7 +231,8 @@ type LRecord struct {
 func (r *LRecord) Type() byte  { return 'L' }
 func (r *LRecord) Valid() bool { return r != nil }
 
-// An LRecordWithoutTLC is an L record without a three-letter code.
+// An LRecordWithoutTLC is an L record without a three-letter code, which
+// contains a log message.
 type LRecordWithoutTLC struct {
 	Text string
 }
