@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -1091,6 +1092,9 @@ func TestParseTestData(t *testing.T) {
 	assert.NoError(t, err)
 	for _, dirEntry := range dirEntries {
 		name := dirEntry.Name()
+		if strings.ToLower(filepath.Ext(dirEntry.Name())) != ".igc" {
+			continue
+		}
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 			file, err := os.Open(filepath.Join("testdata", name))
