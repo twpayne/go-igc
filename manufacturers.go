@@ -1,7 +1,6 @@
 package igc
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -76,14 +75,14 @@ func init() {
 	ManufacturersByTLC = make(map[string]*Manufacturer, len(ApprovedManufacturers)+len(NonApprovedManufacturers))
 	for i, manufacturer := range ApprovedManufacturers {
 		if _, ok := ApprovedManufacturersByTLC[manufacturer.TLC]; ok {
-			panic(fmt.Sprintf("%s: duplicate manufacturer", manufacturer.TLC))
+			panic(manufacturer.TLC + ": duplicate manufacturer")
 		}
 		ApprovedManufacturersByTLC[manufacturer.TLC] = &ApprovedManufacturers[i]
 		ManufacturersByTLC[manufacturer.TLC] = &ApprovedManufacturers[i]
 	}
 	for i, manufacturer := range NonApprovedManufacturers {
 		if _, ok := ManufacturersByTLC[manufacturer.TLC]; ok {
-			panic(fmt.Sprintf("%s: duplicate manufacturer", manufacturer.TLC))
+			panic(manufacturer.TLC + ": duplicate manufacturer")
 		}
 		ManufacturersByTLC[manufacturer.TLC] = &NonApprovedManufacturers[i]
 	}

@@ -430,7 +430,7 @@ func (p *parser) parseFRecord(line []byte) (*FRecord, error) {
 	fRecord.Time, errs = p.parseTime(m[1], m[2], m[3], 0, errs)
 	n := len(m[4]) / 2
 	satelliteIDs := make([]int, 0, n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		satelliteID, _ := atoi(m[4][2*i : 2*i+2])
 		satelliteIDs = append(satelliteIDs, satelliteID)
 	}
@@ -536,7 +536,7 @@ func (p *parser) parseBKRecordAdditions(line []byte, startColumn int) ([]BKRecor
 	}
 	var errs []error
 	additions := make([]BKRecordAddition, 0, n)
-	for i := 0; i < n; i++ {
+	for i := range n {
 		var addition BKRecordAddition
 		addition.StartColumn, _ = atoi(m[2][7*i : 7*i+2])
 		addition.FinishColumn, _ = atoi(m[2][7*i+2 : 7*i+4])

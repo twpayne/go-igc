@@ -1,11 +1,16 @@
+run:
+  go: '1.22'
+
 linters:
   enable:
   - asasalint
   - asciicheck
   - bidichk
   - bodyclose
+  - canonicalheader
   - containedctx
   - contextcheck
+  - copyloopvar
   - decorder
   - dogsled
   - dupl
@@ -43,8 +48,11 @@ linters:
   - inamedparam
   - ineffassign
   - interfacebloat
+  - intrange
+  - ireturn
   - loggercheck
   - makezero
+  - mirror
   - misspell
   - nakedret
   - nilerr
@@ -53,15 +61,20 @@ linters:
   - nolintlint
   - nonamedreturns
   - nosprintfhostport
+  - perfsprint
   - prealloc
   - predeclared
   - promlinter
+  - protogetter
   - reassign
   - revive
   - rowserrcheck
+  - sloglint
+  - spancheck
   - sqlclosecheck
   - staticcheck
   - stylecheck
+  - tagalign
   - tenv
   - thelper
   - tparallel
@@ -71,8 +84,8 @@ linters:
   - usestdlibvars
   - wastedassign
   - whitespace
+  - zerologlint
   disable:
-  - copyloopvar
   - cyclop
   - depguard
   - exhaustruct
@@ -83,7 +96,6 @@ linters:
   - gocyclo
   - godox
   - gomnd
-  - ireturn
   - lll
   - maintidx
   - musttag
@@ -113,6 +125,10 @@ linters-settings:
     - fieldalignment
     - shadow
     enable-all: true
+  ireturn:
+    allow:
+    - error
+    - github.com/twpayne/go-igc\.Record
   misspell:
     locale: US
   stylecheck:
