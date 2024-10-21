@@ -44,6 +44,7 @@ var ApprovedManufacturers = []Manufacturer{
 // NonApprovedManufacturers is an unofficial list of non-approved manufacturers.
 var NonApprovedManufacturers = []Manufacturer{
 	{TLC: "XAH", SCC: 'X', Name: "Ascent"},
+	{TLC: "XBM", SCC: 'X', Name: "Burnair"},
 	{TLC: "XCM", SCC: 'X', Name: "Naviter"},
 	{TLC: "XCS", SCC: 'X', Name: "XCSoar"},
 	{TLC: "XCT", SCC: 'X', Name: "XC Track"},
