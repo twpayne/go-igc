@@ -580,7 +580,7 @@ func (p *parser) parseKRecord(line []byte) (*KRecord, error) {
 	var errs []error
 	kRecord.Time, errs = p.parseTime(m[1], m[2], m[3], 0, errs)
 	if len(p.kRecordAdditions) > 0 {
-		kRecord.Additions = make(map[string]int)
+		kRecord.Additions = make(map[string]int, len(p.kRecordAdditions))
 		for _, addition := range p.kRecordAdditions {
 			var value int
 			var ok bool
@@ -628,7 +628,7 @@ func (p *parser) parseNRecord(line []byte) (*NRecord, error) {
 	var errs []error
 	nRecord.Time, errs = p.parseTime(m[1], m[2], m[3], 0, errs)
 	if len(p.nRecordAdditions) > 0 {
-		nRecord.Additions = make(map[string]int)
+		nRecord.Additions = make(map[string]int, len(p.nRecordAdditions))
 		for _, addition := range p.nRecordAdditions {
 			var value int
 			var ok bool
