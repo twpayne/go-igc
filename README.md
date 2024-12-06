@@ -3,7 +3,7 @@
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/twpayne/go-igc)](https://pkg.go.dev/github.com/twpayne/go-igc)
 
 Package `igc` handles [IGC
-files](https://www.fai.org/sites/default/files/igc_fr_specification_with_al8_2023-2-1_0.pdf).
+files](https://www.fai.org/page/igc-approved-flight-recorders).
 
 ## Features
 
