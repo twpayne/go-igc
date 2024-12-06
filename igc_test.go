@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -62,36 +63,36 @@ func TestParseLine(t *testing.T) {
 			expectedErr: "1: no date",
 		},
 		{
-			name: "first_c_record",
+			name: "c_record_declaration",
 			line: "C110524093545000000000502",
-			expectedRecord: &igc.FirstCRecord{
+			expectedRecord: &igc.CRecordDeclaration{
 				DeclarationTime:    time.Date(2024, time.May, 11, 9, 35, 45, 0, time.UTC),
 				TaskNumber:         5,
 				NumberOfTurnpoints: 2,
 			},
 		},
 		{
-			name: "first_c_record_xctrack",
+			name: "c_record_declaration_xctrack",
 			line: "C0110231200370000000000-1 Competition task",
-			expectedRecord: &igc.FirstCRecord{
+			expectedRecord: &igc.CRecordDeclaration{
 				DeclarationTime:    time.Date(2023, time.October, 1, 12, 0, 37, 0, time.UTC),
 				NumberOfTurnpoints: -1,
 				Text:               " Competition task",
 			},
 		},
 		{
-			name: "c_record",
+			name: "c_record_waypoint",
 			line: "C4415173N00604205ET-296-Trainon",
-			expectedRecord: &igc.CRecord{
+			expectedRecord: &igc.CRecordWaypoint{
 				Lat:  44 + 15173/6e4,
 				Lon:  6 + 4205/6e4,
 				Text: "T-296-Trainon",
 			},
 		},
 		{
-			name: "c_record_sw",
+			name: "c_record_waypoint_sw",
 			line: "C4415173S00604205WT-296-Trainon",
-			expectedRecord: &igc.CRecord{
+			expectedRecord: &igc.CRecordWaypoint{
 				Lat:  -(44 + 15173/6e4),
 				Lon:  -(6 + 4205/6e4),
 				Text: "T-296-Trainon",
@@ -1163,6 +1164,35 @@ func TestParseTestData(t *testing.T) {
 			)
 			assert.NoError(t, err)
 			assertEqualErrors(t, expectedErrorsByName[name], igc.Errs)
+		})
+	}
+}
+
+func TestTypes(t *testing.T) {
+	for _, value := range []igc.Record{
+		&igc.ARecord{},
+		&igc.BRecord{},
+		&igc.CRecordWaypoint{},
+		&igc.CRecordDeclaration{},
+		&igc.DRecord{},
+		&igc.ERecord{},
+		&igc.ERecordWithoutTLC{},
+		&igc.FRecord{},
+		&igc.GRecord{},
+		&igc.HRecord{},
+		&igc.HFDTERecord{},
+		&igc.HRecordWithInvalidSource{},
+		&igc.IRecord{},
+		&igc.JRecord{},
+		&igc.KRecord{},
+		&igc.LRecord{},
+		&igc.LRecordWithoutTLC{},
+		&igc.MRecord{},
+		&igc.NRecord{},
+	} {
+		_, name, _ := strings.Cut(reflect.TypeOf(value).String(), ".")
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, name[0], value.Type())
 		})
 	}
 }

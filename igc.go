@@ -88,9 +88,9 @@ type BRecord struct {
 func (r *BRecord) Type() byte  { return 'B' }
 func (r *BRecord) Valid() bool { return r != nil }
 
-// A FirstCRecord is a first C record, which contains the first line of a
+// A CRecordDeclaration is a first C record, which contains the first line of a
 // pre-declared task.
-type FirstCRecord struct {
+type CRecordDeclaration struct {
 	DeclarationTime    time.Time
 	FlightYear         int
 	FlightMonth        int
@@ -100,18 +100,19 @@ type FirstCRecord struct {
 	Text               string
 }
 
-func (r *FirstCRecord) Type() byte  { return 'C' }
-func (r *FirstCRecord) Valid() bool { return r != nil }
+func (r *CRecordDeclaration) Type() byte  { return 'C' }
+func (r *CRecordDeclaration) Valid() bool { return r != nil }
 
-// A CRecord is a C record, which contains a pre-declared task.
-type CRecord struct {
+// A CRecordWaypoint is a C record, which contains a waypoint in a declared
+// task.
+type CRecordWaypoint struct {
 	Lat  float64
 	Lon  float64
 	Text string
 }
 
-func (r *CRecord) Type() byte  { return 'C' }
-func (r *CRecord) Valid() bool { return r != nil }
+func (r *CRecordWaypoint) Type() byte  { return 'C' }
+func (r *CRecordWaypoint) Valid() bool { return r != nil }
 
 // A DRecord is a D record, which contains differential GPS information.
 type DRecord struct {

@@ -59,8 +59,8 @@ var (
 
 	aRecordRx                  = regexp.MustCompile(`\AA([A-Z]{3})(.*)\z`)
 	bRecordRx                  = regexp.MustCompile(`\AB(\d{2})(\d{2})(\d{2})(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])([AV])([0-9\-]\d{4})([0-9\-]\d{4})(.*)\z`)
-	cRecordRx                  = regexp.MustCompile(`\AC(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*)\z`)
-	firstCRecordRx             = regexp.MustCompile(`\AC(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([0-9\-]\d)(.*)\z`)
+	cRecordDeclarationRx       = regexp.MustCompile(`\AC(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{4})([0-9\-]\d)(.*)\z`)
+	cRecordWaypointRx          = regexp.MustCompile(`\AC(\d{2})(\d{5})([NS])(\d{3})(\d{5})([EW])(.*)\z`)
 	dRecordRx                  = regexp.MustCompile(`\AD([12])(\d{4})\z`)
 	eRecordRx                  = regexp.MustCompile(`\AE(\d{2})(\d{2})(\d{2})([A-Z]{3})(.*)\z`)
 	eRecordWithoutTLCRx        = regexp.MustCompile(`\AE(\d{2})(\d{2})(\d{2})(.*)\z`)
@@ -348,55 +348,55 @@ func (p *parser) parseBRecord(line []byte) (*BRecord, error) {
 
 func (p *parser) parseCRecord(line []byte) (Record, error) {
 	if len(p.cRecords) == 0 {
-		if firstCRecord, err := p.parseFirstCRecord(line); err == nil {
-			return firstCRecord, nil
+		if cRecordDeclaration, err := p.parseCRecordDeclaration(line); err == nil {
+			return cRecordDeclaration, nil
 		}
 	}
-	m := cRecordRx.FindSubmatch(line)
+	m := cRecordWaypointRx.FindSubmatch(line)
 	if m == nil {
 		return nil, invalidRecordError('C')
 	}
-	var cRecord CRecord
+	var cRecordWaypoint CRecordWaypoint
 	latDeg, _ := atoi(m[1])
 	latMin, _ := atoi(m[2])
-	cRecord.Lat = float64(latDeg) + float64(latMin)/6e4
+	cRecordWaypoint.Lat = float64(latDeg) + float64(latMin)/6e4
 	if m[3][0] == 'S' {
-		cRecord.Lat = -cRecord.Lat
+		cRecordWaypoint.Lat = -cRecordWaypoint.Lat
 	}
 	lonDeg, _ := atoi(m[4])
 	lonMin, _ := atoi(m[5])
-	cRecord.Lon = float64(lonDeg) + float64(lonMin)/6e4
+	cRecordWaypoint.Lon = float64(lonDeg) + float64(lonMin)/6e4
 	if m[6][0] == 'W' {
-		cRecord.Lon = -cRecord.Lon
+		cRecordWaypoint.Lon = -cRecordWaypoint.Lon
 	}
-	cRecord.Text = string(m[7])
-	return &cRecord, nil
+	cRecordWaypoint.Text = string(m[7])
+	return &cRecordWaypoint, nil
 }
 
-func (p *parser) parseFirstCRecord(line []byte) (*FirstCRecord, error) {
-	m := firstCRecordRx.FindSubmatch(line)
+func (p *parser) parseCRecordDeclaration(line []byte) (*CRecordDeclaration, error) {
+	m := cRecordDeclarationRx.FindSubmatch(line)
 	if m == nil {
 		return nil, invalidRecordError('C')
 	}
-	var firstCRecord FirstCRecord
+	var cRecordDeclaration CRecordDeclaration
 	declarationDay, _ := atoi(m[1])
 	declarationMonth, _ := atoi(m[2])
 	declarationTwoDigitYear, _ := atoi(m[3])
 	declarationHour, _ := atoi(m[4])
 	declarationMinute, _ := atoi(m[5])
 	declarationSecond, _ := atoi(m[6])
-	firstCRecord.DeclarationTime = time.Date(
+	cRecordDeclaration.DeclarationTime = time.Date(
 		makeYear(declarationTwoDigitYear), time.Month(declarationMonth), declarationDay,
 		declarationHour, declarationMinute, declarationSecond, 0,
 		time.UTC,
 	)
-	firstCRecord.FlightDay, _ = atoi(m[7])
-	firstCRecord.FlightMonth, _ = atoi(m[8])
-	firstCRecord.FlightYear, _ = atoi(m[9])
-	firstCRecord.TaskNumber, _ = atoi(m[10])
-	firstCRecord.NumberOfTurnpoints, _ = atoi(m[11])
-	firstCRecord.Text = string(m[12])
-	return &firstCRecord, nil
+	cRecordDeclaration.FlightDay, _ = atoi(m[7])
+	cRecordDeclaration.FlightMonth, _ = atoi(m[8])
+	cRecordDeclaration.FlightYear, _ = atoi(m[9])
+	cRecordDeclaration.TaskNumber, _ = atoi(m[10])
+	cRecordDeclaration.NumberOfTurnpoints, _ = atoi(m[11])
+	cRecordDeclaration.Text = string(m[12])
+	return &cRecordDeclaration, nil
 }
 
 func (p *parser) parseDRecord(line []byte) (*DRecord, error) {
