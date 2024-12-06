@@ -23,7 +23,7 @@ func (e *atoiSyntaxError) Error() string {
 }
 
 type invalidAdditionError struct {
-	addition BKRecordAddition
+	addition RecordAddition
 	message  string
 }
 
@@ -38,7 +38,7 @@ func (e invalidRecordError) Error() string {
 }
 
 type missingAdditionError struct {
-	addition BKRecordAddition
+	addition RecordAddition
 }
 
 func (e *missingAdditionError) Error() string {
@@ -71,8 +71,8 @@ var (
 	hfdteRecordValueRx         = regexp.MustCompile(`(\d{2})(\d{2})(\d{2})(?:,(\d{2}))?\z`)
 	hffxaRecordRx              = regexp.MustCompile(`\AHFFXA(\d+)\z`)
 	gRecordRx                  = regexp.MustCompile(`\AG(.*)\z`)
-	ijRecordRx                 = regexp.MustCompile(`\A[IJ](\d{2})((?:\d{4}[A-Z]{3})*)\z`)
-	kRecordRx                  = regexp.MustCompile(`\AK(\d{2})(\d{2})(\d{2})(.*)\z`)
+	ijmRecordRx                = regexp.MustCompile(`\A[IJM](\d{2})((?:\d{4}[A-Z]{3})*)\z`)
+	knRecordRx                 = regexp.MustCompile(`\A[KN](\d{2})(\d{2})(\d{2})(.*)\z`)
 	lRecordRx                  = regexp.MustCompile(`\AL([A-Z]{3})(.*)\z`)
 	lRecordWithoutTLCRx        = regexp.MustCompile(`\AL(.*)\z`)
 )
@@ -82,17 +82,18 @@ type parser struct {
 	date                   time.Time
 	prevTime               time.Time
 	cRecords               []Record
-	bRecordAdditions       []BKRecordAddition
-	bRecordsAdditionsByTLC map[string]*BKRecordAddition
-	ladBRecordAddition     *BKRecordAddition
+	bRecordAdditions       []RecordAddition
+	bRecordsAdditionsByTLC map[string]*RecordAddition
+	ladBRecordAddition     *RecordAddition
 	latMinMul              int
 	latMinDiv              float64
-	lodBRecordAddition     *BKRecordAddition
+	lodBRecordAddition     *RecordAddition
 	lonMinMul              int
 	lonMinDiv              float64
-	tdsBRecordAddition     *BKRecordAddition
+	tdsBRecordAddition     *RecordAddition
 	fracSecondMul          int
-	kRecordAdditions       []BKRecordAddition
+	kRecordAdditions       []RecordAddition
+	nRecordAdditions       []RecordAddition
 }
 
 type ParseOption func(*parser)
@@ -105,7 +106,7 @@ func WithAllowInvalidChars(allowInvalidChars bool) ParseOption {
 
 func newParser(options ...ParseOption) *parser {
 	p := &parser{
-		bRecordsAdditionsByTLC: make(map[string]*BKRecordAddition),
+		bRecordsAdditionsByTLC: make(map[string]*RecordAddition),
 		latMinMul:              1,
 		latMinDiv:              6e4,
 		lonMinMul:              1,
@@ -170,6 +171,10 @@ func (p *parser) parseLines(lines []string) (*IGC, error) {
 			record, err = p.parseKRecord(line)
 		case 'L':
 			record, err = p.parseLRecord(line)
+		case 'M':
+			record, err = p.parseMRecord(line)
+		case 'N':
+			record, err = p.parseNRecord(line)
 		default:
 			err = unknownRecordTypeError(line[0])
 		}
@@ -242,6 +247,10 @@ func (p *parser) parseLines(lines []string) (*IGC, error) {
 		case *KRecord:
 			if record != nil {
 				kRecords = append(kRecords, record)
+			}
+		case *MRecord:
+			if record != nil {
+				p.nRecordAdditions = record.Additions
 			}
 		}
 	}
@@ -506,7 +515,7 @@ func (p *parser) parseHRecord(line []byte) (Record, error) {
 }
 
 func (p *parser) parseIRecord(line []byte) (*IRecord, error) {
-	additions, err := p.parseBKRecordAdditions(line, 36)
+	additions, err := p.parseRecordAdditions(line, 36)
 	if err != nil {
 		return nil, err
 	}
@@ -516,7 +525,7 @@ func (p *parser) parseIRecord(line []byte) (*IRecord, error) {
 }
 
 func (p *parser) parseJRecord(line []byte) (*JRecord, error) {
-	additions, err := p.parseBKRecordAdditions(line, 8)
+	additions, err := p.parseRecordAdditions(line, 8)
 	if err != nil {
 		return nil, err
 	}
@@ -525,8 +534,8 @@ func (p *parser) parseJRecord(line []byte) (*JRecord, error) {
 	}, nil
 }
 
-func (p *parser) parseBKRecordAdditions(line []byte, startColumn int) ([]BKRecordAddition, error) {
-	m := ijRecordRx.FindSubmatch(line)
+func (p *parser) parseRecordAdditions(line []byte, startColumn int) ([]RecordAddition, error) {
+	m := ijmRecordRx.FindSubmatch(line)
 	if m == nil {
 		return nil, invalidRecordError(line[0])
 	}
@@ -535,9 +544,9 @@ func (p *parser) parseBKRecordAdditions(line []byte, startColumn int) ([]BKRecor
 		return nil, invalidRecordError(line[0])
 	}
 	var errs []error
-	additions := make([]BKRecordAddition, 0, n)
+	additions := make([]RecordAddition, 0, n)
 	for i := range n {
-		var addition BKRecordAddition
+		var addition RecordAddition
 		addition.StartColumn, _ = atoi(m[2][7*i : 7*i+2])
 		addition.FinishColumn, _ = atoi(m[2][7*i+2 : 7*i+4])
 		addition.TLC = string(m[2][7*i+4 : 7*i+7])
@@ -563,7 +572,7 @@ func (p *parser) parseBKRecordAdditions(line []byte, startColumn int) ([]BKRecor
 }
 
 func (p *parser) parseKRecord(line []byte) (*KRecord, error) {
-	m := kRecordRx.FindSubmatch(line)
+	m := knRecordRx.FindSubmatch(line)
 	if m == nil {
 		return nil, invalidRecordError('K')
 	}
@@ -600,6 +609,38 @@ func (p *parser) parseLRecord(line []byte) (Record, error) {
 	return &lRecord, nil
 }
 
+func (p *parser) parseMRecord(line []byte) (*MRecord, error) {
+	additions, err := p.parseRecordAdditions(line, 8)
+	if err != nil {
+		return nil, err
+	}
+	return &MRecord{
+		Additions: additions,
+	}, nil
+}
+
+func (p *parser) parseNRecord(line []byte) (*NRecord, error) {
+	m := knRecordRx.FindSubmatch(line)
+	if m == nil {
+		return nil, invalidRecordError('N')
+	}
+	var nRecord NRecord
+	var errs []error
+	nRecord.Time, errs = p.parseTime(m[1], m[2], m[3], 0, errs)
+	if len(p.nRecordAdditions) > 0 {
+		nRecord.Additions = make(map[string]int)
+		for _, addition := range p.nRecordAdditions {
+			var value int
+			var ok bool
+			value, errs, ok = addition.intValue(line, errs)
+			if ok {
+				nRecord.Additions[addition.TLC] = value
+			}
+		}
+	}
+	return &nRecord, errors.Join(errs...)
+}
+
 func (p *parser) parseTime(hourData, minuteData, secondData []byte, nanosecond int, errs []error) (time.Time, []error) {
 	if p.date.IsZero() {
 		return time.Time{}, append(errs, errNoDate)
@@ -621,7 +662,7 @@ func (p *parser) parseTime(hourData, minuteData, secondData []byte, nanosecond i
 	}
 }
 
-func (a *BKRecordAddition) bytesValue(line []byte, errs []error) ([]byte, []error, bool) {
+func (a *RecordAddition) bytesValue(line []byte, errs []error) ([]byte, []error, bool) {
 	if len(line) < a.FinishColumn {
 		return nil, append(errs, &missingAdditionError{
 			addition: *a,
@@ -630,7 +671,7 @@ func (a *BKRecordAddition) bytesValue(line []byte, errs []error) ([]byte, []erro
 	return line[a.StartColumn-1 : a.FinishColumn], errs, true
 }
 
-func (a *BKRecordAddition) intValue(line []byte, errs []error) (int, []error, bool) {
+func (a *RecordAddition) intValue(line []byte, errs []error) (int, []error, bool) {
 	data, errs, ok := a.bytesValue(line, errs)
 	if !ok {
 		return 0, errs, false

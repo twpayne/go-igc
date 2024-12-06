@@ -243,7 +243,7 @@ func TestParseLine(t *testing.T) {
 			name: "i_record_simple",
 			line: "I013638TAS",
 			expectedRecord: &igc.IRecord{
-				Additions: []igc.BKRecordAddition{
+				Additions: []igc.RecordAddition{
 					{StartColumn: 36, FinishColumn: 38, TLC: "TAS"},
 				},
 			},
@@ -252,7 +252,7 @@ func TestParseLine(t *testing.T) {
 			name: "i_record_two_additions",
 			line: "I023638FXA3940SIU",
 			expectedRecord: &igc.IRecord{
-				Additions: []igc.BKRecordAddition{
+				Additions: []igc.RecordAddition{
 					{StartColumn: 36, FinishColumn: 38, TLC: "FXA"},
 					{StartColumn: 39, FinishColumn: 40, TLC: "SIU"},
 				},
@@ -282,7 +282,7 @@ func TestParseLine(t *testing.T) {
 			name: "j_record_two_additions",
 			line: "J020810WDI1113WSP",
 			expectedRecord: &igc.JRecord{
-				Additions: []igc.BKRecordAddition{
+				Additions: []igc.RecordAddition{
 					{StartColumn: 8, FinishColumn: 10, TLC: "WDI"},
 					{StartColumn: 11, FinishColumn: 13, TLC: "WSP"},
 				},
@@ -426,7 +426,7 @@ func TestParseLines(t *testing.T) {
 					FlightNumber: 1,
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 38, TLC: "FXA"},
 						{StartColumn: 39, FinishColumn: 40, TLC: "SIU"},
 					},
@@ -464,7 +464,7 @@ func TestParseLines(t *testing.T) {
 					FlightNumber: 1,
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 38, TLC: "FXA"},
 						{StartColumn: 39, FinishColumn: 40, TLC: "SIU"},
 					},
@@ -504,7 +504,7 @@ func TestParseLines(t *testing.T) {
 					FlightNumber: 1,
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 38, TLC: "FXA"},
 					},
 				},
@@ -541,7 +541,7 @@ func TestParseLines(t *testing.T) {
 					FlightNumber: 1,
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 36, TLC: "TDS"},
 						{StartColumn: 37, FinishColumn: 37, TLC: "LAD"},
 						{StartColumn: 38, FinishColumn: 38, TLC: "LOD"},
@@ -662,7 +662,7 @@ func TestParseLines(t *testing.T) {
 					FlightNumber: 1,
 				},
 				&igc.JRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 8, FinishColumn: 10, TLC: "WDI"},
 						{StartColumn: 11, FinishColumn: 13, TLC: "WSP"},
 					},
@@ -672,6 +672,64 @@ func TestParseLines(t *testing.T) {
 					Additions: map[string]int{
 						"WDI": 276,
 						"WSP": 600,
+					},
+				},
+			},
+		},
+		{
+			name: "m_record",
+			lines: []string{
+				"HFDTEDATE:040624,01",
+				"M020810HRT1113OXY",
+			},
+			expectedRecords: []igc.Record{
+				&igc.HFDTERecord{
+					HRecord: igc.HRecord{
+						Source:   igc.SourceFlightRecorder,
+						TLC:      "DTE",
+						LongName: "DATE",
+						Value:    "040624,01",
+					},
+					Date:         time.Date(2024, time.June, 4, 0, 0, 0, 0, time.UTC),
+					FlightNumber: 1,
+				},
+				&igc.MRecord{
+					Additions: []igc.RecordAddition{
+						{StartColumn: 8, FinishColumn: 10, TLC: "HRT"},
+						{StartColumn: 11, FinishColumn: 13, TLC: "OXY"},
+					},
+				},
+			},
+		},
+		{
+			name: "n_record",
+			lines: []string{
+				"HFDTEDATE:040624,01",
+				"M020810HRT1113OXY",
+				"N123456112098",
+			},
+			expectedRecords: []igc.Record{
+				&igc.HFDTERecord{
+					HRecord: igc.HRecord{
+						Source:   igc.SourceFlightRecorder,
+						TLC:      "DTE",
+						LongName: "DATE",
+						Value:    "040624,01",
+					},
+					Date:         time.Date(2024, time.June, 4, 0, 0, 0, 0, time.UTC),
+					FlightNumber: 1,
+				},
+				&igc.MRecord{
+					Additions: []igc.RecordAddition{
+						{StartColumn: 8, FinishColumn: 10, TLC: "HRT"},
+						{StartColumn: 11, FinishColumn: 13, TLC: "OXY"},
+					},
+				},
+				&igc.NRecord{
+					Time: time.Date(2024, time.June, 4, 12, 34, 56, 0, time.UTC),
+					Additions: map[string]int{
+						"HRT": 112,
+						"OXY": 98,
 					},
 				},
 			},
@@ -728,7 +786,7 @@ func TestParseLines(t *testing.T) {
 					Date: time.Date(2013, time.June, 2, 0, 0, 0, 0, time.UTC),
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 38, TLC: "FXA"},
 						{StartColumn: 39, FinishColumn: 40, TLC: "SIU"},
 						{StartColumn: 41, FinishColumn: 41, TLC: "TDS"},
@@ -771,7 +829,7 @@ func TestParseLines(t *testing.T) {
 					Date: time.Date(2010, time.August, 10, 0, 0, 0, 0, time.UTC),
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 37, TLC: "LAD"},
 						{StartColumn: 38, FinishColumn: 39, TLC: "LOD"},
 						{StartColumn: 40, FinishColumn: 40, TLC: "TDS"},
@@ -844,7 +902,7 @@ func TestParseLines(t *testing.T) {
 					FlightNumber: 1,
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 36, TLC: "LAD"},
 						{StartColumn: 37, FinishColumn: 37, TLC: "LOD"},
 					},
@@ -896,7 +954,7 @@ func TestParseLines(t *testing.T) {
 					FlightNumber: 1,
 				},
 				&igc.IRecord{
-					Additions: []igc.BKRecordAddition{
+					Additions: []igc.RecordAddition{
 						{StartColumn: 36, FinishColumn: 36, TLC: "LAD"},
 						{StartColumn: 37, FinishColumn: 37, TLC: "LOD"},
 					},

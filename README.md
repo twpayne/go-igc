@@ -12,6 +12,7 @@ files](https://www.fai.org/page/igc-approved-flight-recorders).
 * Support for all IGC record types.
 * Support for B record additions.
 * Support for K record additions.
+* Support for N record additions.
 * Support for sub-second resolution timestamps with the `TDS` B record addition.
 * Support for high-resolution coordinates with the `LAD` and `LOD` B record
   additions.

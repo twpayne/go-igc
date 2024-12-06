@@ -57,8 +57,8 @@ const (
 	GPSQualifierDGPS GPSQualifier = '2'
 )
 
-// An BKRecordAddition is an addition to a B or K record.
-type BKRecordAddition struct {
+// An RecordAddition is an addition to a B, K, or N record.
+type RecordAddition struct {
 	TLC          string
 	StartColumn  int
 	FinishColumn int
@@ -198,7 +198,7 @@ type HFDTERecord struct {
 
 // An IRecord is an I record, which contains additions to B records.
 type IRecord struct {
-	Additions []BKRecordAddition
+	Additions []RecordAddition
 }
 
 func (r *IRecord) Type() byte  { return 'I' }
@@ -206,7 +206,7 @@ func (r *IRecord) Valid() bool { return r != nil }
 
 // A JRecord is a J record, which contains additions to K records.
 type JRecord struct {
-	Additions []BKRecordAddition
+	Additions []RecordAddition
 }
 
 func (r *JRecord) Type() byte  { return 'J' }
@@ -239,6 +239,24 @@ type LRecordWithoutTLC struct {
 
 func (r *LRecordWithoutTLC) Type() byte  { return 'L' }
 func (r *LRecordWithoutTLC) Valid() bool { return false }
+
+// An MRecord is an M record, which contains additions to N records.
+type MRecord struct {
+	Additions []RecordAddition
+}
+
+func (r *MRecord) Type() byte  { return 'M' }
+func (r *MRecord) Valid() bool { return r != nil }
+
+// A NRecord is a N record, which contains data not signed by the security
+// signature.
+type NRecord struct {
+	Time      time.Time
+	Additions map[string]int
+}
+
+func (r *NRecord) Type() byte  { return 'N' }
+func (r *NRecord) Valid() bool { return r != nil }
 
 // An IGC is a parsed IGC file.
 type IGC struct {
