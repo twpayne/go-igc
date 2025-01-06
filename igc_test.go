@@ -1014,6 +1014,9 @@ func TestParseTestData(t *testing.T) {
 		"2017_08_31_00_14_21_88GGB291.IGC": {
 			`8722: "\x1A": unknown record type`,
 		},
+		"MD_85ugkjj1.IGC": {
+			`18: invalid C record`,
+		},
 		"igc-PkwnUq.igc": {
 			"48: \"7-00\": syntax error",
 			"53: \"8-03\": syntax error",
