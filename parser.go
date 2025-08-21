@@ -460,9 +460,9 @@ func (p *parser) parseGRecord(line []byte) (*GRecord, error) {
 func (p *parser) parseHRecord(line []byte) (Record, error) {
 	if m := hfdteRecordRx.FindSubmatch(line); m != nil {
 		var hfdteRecord HFDTERecord
-		hfdteRecord.HRecord.Source = 'F'
-		hfdteRecord.HRecord.TLC = "DTE"
-		hfdteRecord.HRecord.Value = string(bytes.Join(m[1:], nil))
+		hfdteRecord.Source = 'F'
+		hfdteRecord.TLC = "DTE"
+		hfdteRecord.Value = string(bytes.Join(m[1:], nil))
 		day, _ := atoi(m[1])
 		month, _ := atoi(m[2])
 		twoDigitYear, _ := atoi(m[3])

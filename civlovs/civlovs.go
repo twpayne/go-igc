@@ -109,7 +109,7 @@ func (s *Client) ValidateIGC(ctx context.Context, filename string, igcFile io.Re
 	if err := w.Close(); err != nil {
 		return StatusUnknown, nil, err
 	}
-	req, err := http.NewRequest(http.MethodPost, s.endpoint, b)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.endpoint, b)
 	if err != nil {
 		return StatusUnknown, nil, err
 	}
