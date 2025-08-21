@@ -1,6 +1,12 @@
 module github.com/twpayne/go-igc
 
-go 1.22
+go 1.24
+
+tool (
+	github.com/twpayne/go-igc/cmd/parse-all
+	github.com/twpayne/go-igc/cmd/summarize-igc
+	github.com/twpayne/go-igc/cmd/validate-igc
+)
 
 require github.com/alecthomas/assert/v2 v2.10.0
 
