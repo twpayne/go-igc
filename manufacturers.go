@@ -60,6 +60,7 @@ var NonApprovedManufacturers = []Manufacturer{
 	{TLC: "XTR", SCC: 'X', Name: "XC Tracer"},
 	{TLC: "XTT", SCC: 'X', Name: "LiveTrack24"},
 	{TLC: "XVB", SCC: 'X', Name: "VairBration"},
+	{TLC: "XVV", SCC: 'V', Name: "Vector Vario"},
 }
 
 var (
