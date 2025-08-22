@@ -27,12 +27,12 @@ func main() {
 		case civlovs.StatusValid:
 			fmt.Printf("%s: %s\n", filename, status)
 		case civlovs.StatusInvalid:
-			fmt.Printf("%s: %s: %s\n", filename, status, err)
+			fmt.Printf("%s: %s: %v\n", filename, status, err)
 			if worstStatus < 1 {
 				worstStatus = 1
 			}
 		case civlovs.StatusUnknown:
-			fmt.Printf("%s: %s: %s\n", filename, status, err)
+			fmt.Printf("%s: %s: %v\n", filename, status, err)
 			if worstStatus < 2 {
 				worstStatus = 2
 			}
