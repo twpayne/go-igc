@@ -4,6 +4,7 @@ go 1.24
 
 tool (
 	github.com/twpayne/go-igc/cmd/parse-all
+	github.com/twpayne/go-igc/cmd/parse-igc
 	github.com/twpayne/go-igc/cmd/summarize-igc
 	github.com/twpayne/go-igc/cmd/validate-igc
 )
