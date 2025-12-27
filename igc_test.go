@@ -354,6 +354,7 @@ func TestParseLine(t *testing.T) {
 func TestParseLines(t *testing.T) {
 	for _, tc := range []struct {
 		name            string
+		parseOptions    []igc.ParseOption
 		lines           []string
 		expectedRecords []igc.Record
 		expectedErrs    []string
@@ -996,9 +997,49 @@ func TestParseLines(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "out_of_order",
+			parseOptions: []igc.ParseOption{
+				igc.WithAllowOutOfOrderRecords(time.Second),
+			},
+			lines: []string{
+				"HFDTE310525",
+				"E143859PEVVario Device removed",
+				"E143858CGDSwitched location to Internal",
+				"B1438574637077N00710174EA0091200868005003000359093",
+			},
+			expectedRecords: []igc.Record{
+				&igc.HFDTERecord{
+					HRecord: igc.HRecord{
+						Source: igc.SourceFlightRecorder,
+						TLC:    "DTE",
+						Value:  "310525",
+					},
+					Date: time.Date(2025, time.May, 31, 0, 0, 0, 0, time.UTC),
+				},
+				&igc.ERecord{
+					Time: time.Date(2025, time.May, 31, 14, 38, 59, 0, time.UTC),
+					TLC:  "PEV",
+					Text: "Vario Device removed",
+				},
+				&igc.ERecord{
+					Time: time.Date(2025, time.May, 31, 14, 38, 58, 0, time.UTC),
+					TLC:  "CGD",
+					Text: "Switched location to Internal",
+				},
+				&igc.BRecord{
+					Time:          time.Date(2025, time.June, 1, 14, 38, 57, 0, time.UTC),
+					Lat:           46.61795,
+					Lon:           7.169566666666666,
+					Validity:      igc.Validity(65),
+					AltWGS84:      868,
+					AltBarometric: 912,
+				},
+			},
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, err := igc.ParseLines(tc.lines)
+			actual, err := igc.ParseLines(tc.lines, tc.parseOptions...)
 			assert.NoError(t, err)
 			assertEqualErrors(t, tc.expectedErrs, actual.Errs)
 			if tc.expectedRecords != nil {

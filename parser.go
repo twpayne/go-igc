@@ -79,6 +79,7 @@ var (
 
 type parser struct {
 	allowInvalidChars      bool
+	allowOutOfOrderRecords time.Duration
 	date                   time.Time
 	prevTime               time.Time
 	cRecords               []Record
@@ -101,6 +102,12 @@ type ParseOption func(*parser)
 func WithAllowInvalidChars(allowInvalidChars bool) ParseOption {
 	return func(p *parser) {
 		p.allowInvalidChars = allowInvalidChars
+	}
+}
+
+func WithAllowOutOfOrderRecords(allowOutOfOrderRecords time.Duration) ParseOption {
+	return func(p *parser) {
+		p.allowOutOfOrderRecords = allowOutOfOrderRecords
 	}
 }
 
@@ -652,13 +659,19 @@ func (p *parser) parseTime(hourData, minuteData, secondData []byte, nanosecond i
 		time.Duration(minute)*time.Minute +
 		time.Duration(second)*time.Second +
 		time.Duration(nanosecond)*time.Nanosecond
+	// Check for timestamp order. If we find a timestamp that is more than
+	// p.allowOutOfOrderRecords before the most recent timestamp then assume
+	// that the day has rolled over and advance the date.
 	for {
-		t := p.date.Add(durationSinceMidnight)
-		if !t.Before(p.prevTime) {
+		switch t := p.date.Add(durationSinceMidnight); {
+		case !t.Before(p.prevTime):
 			p.prevTime = t
 			return t, errs
+		case p.prevTime.Sub(t) <= p.allowOutOfOrderRecords:
+			return t, errs
+		default:
+			p.date = p.date.AddDate(0, 0, 1)
 		}
-		p.date = p.date.AddDate(0, 0, 1)
 	}
 }
 
