@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/alecthomas/assert/v2"
+	"golang.org/x/text/encoding/charmap"
 
 	"github.com/twpayne/go-igc"
 )
@@ -18,6 +19,7 @@ func TestParseLine(t *testing.T) {
 	for _, tc := range []struct {
 		name           string
 		line           string
+		options        []igc.ParseOption
 		expectedRecord igc.Record
 		expectedErr    string
 	}{
@@ -202,6 +204,36 @@ func TestParseLine(t *testing.T) {
 			},
 		},
 		{
+			name: "hfplt_record_iso8859_1",
+			line: "HFPLTPILOT:Alex ROB\xc9",
+			options: []igc.ParseOption{
+				igc.WithHRecordValueDecoder(func(data []byte) (string, error) {
+					return charmap.Windows1252.NewDecoder().String(string(data))
+				}),
+			},
+			expectedRecord: &igc.HRecord{
+				Source:   igc.SourceFlightRecorder,
+				TLC:      "PLT",
+				LongName: "PILOT",
+				Value:    "Alex ROBÉ",
+			},
+		},
+		{
+			name: "hfplt_record_iso8859_1",
+			line: "HFPLTPILOT:\x8eeljko KUMER",
+			options: []igc.ParseOption{
+				igc.WithHRecordValueDecoder(func(data []byte) (string, error) {
+					return charmap.Windows1252.NewDecoder().String(string(data))
+				}),
+			},
+			expectedRecord: &igc.HRecord{
+				Source:   igc.SourceFlightRecorder,
+				TLC:      "PLT",
+				LongName: "PILOT",
+				Value:    "Željko KUMER",
+			},
+		},
+		{
 			name: "hffrs_record",
 			line: "HFFRSSECURITYOK",
 			expectedRecord: &igc.HRecord{
@@ -339,7 +371,7 @@ func TestParseLine(t *testing.T) {
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, err := igc.ParseLines([]string{tc.line})
+			actual, err := igc.ParseLines([]string{tc.line}, tc.options...)
 			assert.NoError(t, err)
 			if tc.expectedErr != "" {
 				assertEqualErrors(t, []string{tc.expectedErr}, actual.Errs)

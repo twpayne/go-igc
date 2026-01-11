@@ -11,6 +11,7 @@ files](https://www.fai.org/page/igc-approved-flight-recorders).
   specification.
 * Support for all IGC record types.
 * Support for B record additions.
+* Support for pluggable decoding of H records (e.g. for Windows-1252 encoding).
 * Support for K record additions.
 * Support for N record additions.
 * Support for sub-second resolution timestamps with the `TDS` B record addition.

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 	"unicode"
+	"unicode/utf8"
 )
 
 var errNoDate = errors.New("no date")
@@ -36,6 +37,8 @@ type invalidRecordError byte
 func (e invalidRecordError) Error() string {
 	return "invalid " + string(e) + " record"
 }
+
+var errInvalidUTF8Sequence = errors.New("invalid UTF-8 sequence")
 
 type missingAdditionError struct {
 	addition RecordAddition
@@ -77,10 +80,13 @@ var (
 	lRecordWithoutTLCRx        = regexp.MustCompile(`\AL(.*)\z`)
 )
 
+type HRecordValueDecoder func([]byte) (string, error)
+
 type parser struct {
 	allowInvalidChars      bool
 	allowOutOfOrderRecords time.Duration
 	date                   time.Time
+	hRecordValueDecoder    HRecordValueDecoder
 	prevTime               time.Time
 	cRecords               []Record
 	bRecordAdditions       []RecordAddition
@@ -111,9 +117,16 @@ func WithAllowOutOfOrderRecords(allowOutOfOrderRecords time.Duration) ParseOptio
 	}
 }
 
+func WithHRecordValueDecoder(decoder HRecordValueDecoder) ParseOption {
+	return func(p *parser) {
+		p.hRecordValueDecoder = decoder
+	}
+}
+
 func newParser(options ...ParseOption) *parser {
 	p := &parser{
 		bRecordsAdditionsByTLC: make(map[string]*RecordAddition),
+		hRecordValueDecoder:    defaultHRecordValueDecoder,
 		latMinMul:              1,
 		latMinDiv:              6e4,
 		lonMinMul:              1,
@@ -500,7 +513,11 @@ func (p *parser) parseHRecord(line []byte) (Record, error) {
 	hRecord.Source = Source(m[1][0])
 	hRecord.TLC = string(m[2])
 	hRecord.LongName = string(m[3])
-	hRecord.Value = string(m[4])
+	var err error
+	hRecord.Value, err = p.hRecordValueDecoder(m[4])
+	if err != nil {
+		return nil, invalidRecordError('H') // FIXME include err?
+	}
 	if hRecord.TLC == "DTE" {
 		m := hfdteRecordValueRx.FindSubmatch(m[4])
 		if m == nil {
@@ -718,6 +735,14 @@ func atoi(data []byte) (int, error) {
 		result = 10*result + int(b) - '0'
 	}
 	return result * sign, nil
+}
+
+// defaultHRecordValueDecoder treats value as a UTF-8 bytes.
+func defaultHRecordValueDecoder(value []byte) (string, error) {
+	if !utf8.Valid(value) {
+		return "", errInvalidUTF8Sequence
+	}
+	return string(value), nil
 }
 
 // trimCRs drops terminal \rs from data.

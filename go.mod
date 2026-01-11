@@ -1,6 +1,6 @@
 module github.com/twpayne/go-igc
 
-go 1.24
+go 1.24.0
 
 tool (
 	github.com/twpayne/go-igc/cmd/parse-all
@@ -9,7 +9,10 @@ tool (
 	github.com/twpayne/go-igc/cmd/validate-igc
 )
 
-require github.com/alecthomas/assert/v2 v2.10.0
+require (
+	github.com/alecthomas/assert/v2 v2.10.0
+	golang.org/x/text v0.33.0
+)
 
 require (
 	github.com/alecthomas/repr v0.4.0 // indirect
